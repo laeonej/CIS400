@@ -1,3 +1,14 @@
+# CIS 400 Senior Design
+James Hu | LaeOne Jung | Jeff Li | Younghu Park
+
+
+## Relevant Links
+
+https://hackernoon.com/how-to-build-a-multiplayer-browser-game-4a793818c29b
+https://github.com/omgimanerd/game-framework
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
