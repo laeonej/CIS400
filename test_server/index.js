@@ -4,7 +4,7 @@ const PORT = 5000; // PORT of server
 //const HOST = "127.0.0.1"; // Hosting Server change when you make it live on server according to your hosting server
 var players = {}; // It will keep all the players data who have register using mobile number. you can use actual persistence database I have used this for temporery basis
 var sockets = {}; // stores all the connected clients
-var games = {}; // stores the ongoing game
+var table = {}; // stores the ongoing game
 var winCombinations = [
     [[0, 0], [0, 1], [0, 2]],
     [[1, 0], [1, 1], [1, 2]],
@@ -19,7 +19,25 @@ var winCombinations = [
 // STEP 4 ::=> When any request comes it will trigger and bind all the susequence events that will triggered as per app logic
 io.on('connection', client => {
     console.log("connected : " + client.id);
-    client.emit('connected', { "id": client.id }); // STEP 5 ::=> Notify request cllient that it is not connected with server
+    client.emit('connected', { "id": client.id }); // STEP 5 ::=> Notify request client that it is not connected with server
+
+
+
+    client.on('joinTable', data => {
+        // always assume the player is new
+        var flag = true;
+        if (table[data.tableCode]) {
+            sockets[client.id] = {
+                tableCode: data.tableCode,
+                playerName: data.playerName
+            };
+        } else {
+            flag = false;
+        }
+
+        client.emit("confirmJoinTable", flag);
+    });
+
 
     // STEP 6 ::=> It is a event which will handle user registration process
     client.on('checkUserDetail', data => {

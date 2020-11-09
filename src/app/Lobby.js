@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 // import logo from './logo.svg';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import GetUserDetail from './Login';
+import LobbyInput from './LobbyInput';
 // import ShowUsers from './components/ShowUsers';
 // import GamePlay from './components/GamePlay';
 // import { Container } from 'react-bootstrap';
@@ -25,7 +25,6 @@ export class Lobby extends Component {
         // Made a connection with server
         const socket = io(endpoint, { transports: ['websocket'] });
         socket.on("connected", data => {
-            console.log(data.connected);
             this.setState({ socket: socket })
         });
     }
@@ -44,14 +43,12 @@ export class Lobby extends Component {
     };
     render() {
         return (
-
-            !this.state.isGameStarted ? !this.state.isRegistered ? <header className="App-header">
+            <header className="App-header">
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
                 {this.state.socket
-                    ? <GetUserDetail socket={this.state.socket} registrationConfirmation={this.registrationConfirmation} />
+                    ? <LobbyInput socket={this.state.socket} />
                     : <p>Loading...</p>}
-            </header> :
-                <div> GAME STARTED </div> : <div> SUCCESS </div>
+            </header>
 
             //TODO ADD IN DIV THAT SHOWS BUTTONS TO CREATE/
             //TODO ADD IN GAMEBOARD
