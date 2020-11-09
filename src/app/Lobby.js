@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 // import logo from './logo.svg';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import LobbyInput from './LobbyInput';
+import LobbyJoin from './LobbyJoin';
 // import ShowUsers from './components/ShowUsers';
 // import GamePlay from './components/GamePlay';
 // import { Container } from 'react-bootstrap';
@@ -46,7 +46,7 @@ export class Lobby extends Component {
             <header className="App-header">
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
                 {this.state.socket
-                    ? <LobbyInput socket={this.state.socket} />
+                    ? <LobbyJoin socket={this.state.socket} />
                     : <p>Loading...</p>}
             </header>
 

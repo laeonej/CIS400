@@ -21,8 +21,26 @@ io.on('connection', client => {
     console.log("connected : " + client.id);
     client.emit('connected', { "id": client.id }); // STEP 5 ::=> Notify request client that it is not connected with server
 
+    client.on("createTable", data => {
+        var flag = false;
 
+        while (!flag) {
+            var result = "";
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            for (var i = 0; i < characters.length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            if (!table[result]) {
+                table[result] = {
+                    players: [data.playerName]
+                }
+                flag = true;
+            }
+        }
 
+        sockets.emit("confirmCreateTable", { "tableCode": tableCode });
+
+    });
     client.on('joinTable', data => {
         // always assume the player is new
         var flag = true;
@@ -31,6 +49,9 @@ io.on('connection', client => {
                 tableCode: data.tableCode,
                 playerName: data.playerName
             };
+
+            //add player to table
+            table[data.tableCode].players.push(data.playerName)
         } else {
             flag = false;
         }
