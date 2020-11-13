@@ -6,12 +6,7 @@ class Table extends Component {
         super();
         this.state = {
             tableCode: null,
-            playerName: [
-                { name: 'james' },
-                { name: 'laeone' },
-                { name: 'jeff' },
-                { name: 'younghu' }
-            ]
+            playerName: ['laeone', 'younghu', 'jeff', 'james']
         };
     }
     componentDidMount() {
@@ -34,9 +29,9 @@ class Table extends Component {
             <div>
                 <div id="tester"> </div>
 
-                <h2> {this.state.tableCode} </h2>
-                <div> {this.state.playerName.map(player => (
-                    <p> {player}</p>
+                <h2> {this.props.tableCode} </h2>
+                <div> {this.state.playerName.map((player, index) => (
+                    <p key={index}> {player} </p>
                 ))}
                 </div >
             </div>

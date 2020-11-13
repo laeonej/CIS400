@@ -9,8 +9,9 @@ class TableCreate extends Component {
         };
     }
     componentDidMount() {
-        this.props.socket.on('confirmJoinTable', data => {
-            this.props.changeTableCode(data.tableCode);
+        this.props.socket.on('confirmCreateTable', data => {
+            console.log("this printed");
+            this.props.changeInfo({ "tableCode": data.tableCode, "playerName": this.state.playerName });
             //this.setState({ tableCode: data.tableCode });
         });
     }
@@ -20,6 +21,7 @@ class TableCreate extends Component {
     }
 
     createTable = () => {
+        console.log("this is printing");
         if (this.state.playerName != "") {
             this.props.socket.emit('createTable', { "playerName": this.state.playerName });
         } else {

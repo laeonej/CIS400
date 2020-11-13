@@ -26,8 +26,8 @@ io.on('connection', client => {
 
         while (!flag) {
             var result = "";
-            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            for (var i = 0; i < characters.length; i++) {
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            for (var i = 0; i < 6; i++) {
                 result += characters.charAt(Math.floor(Math.random() * characters.length));
             }
             if (!table[result]) {
@@ -37,7 +37,7 @@ io.on('connection', client => {
                 flag = true;
             }
         }
-
+        console.log("this is printing");
         client.emit("confirmCreateTable", { "tableCode": result });
 
     });

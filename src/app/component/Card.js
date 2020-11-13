@@ -6,6 +6,8 @@ var cardHeight = 80;
 var cardWidth = 0.75 * cardHeight;
 
 
+
+
 export default class Card extends React.Component {
     constructor(props) {
         super(props)
@@ -20,10 +22,11 @@ export default class Card extends React.Component {
 
 
     render() {
-        return(
-            <div style={{position: 'absolute'}}>
-                <img src={cardback} alt='card' height={cardHeight} width={cardWidth}/>
+        return (
+            <div style={{ position: 'absolute' }}>
+                <img src={cardback} alt='card' height={cardHeight} width={cardWidth} />
             </div>
+
         );
     }
 }

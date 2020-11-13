@@ -2,7 +2,7 @@ import React from "react";
 
 import { Menu } from './pages/Menu/MenuPage.js';
 import { Login } from './pages/Login/LoginPage.js';
-import { Lobby } from './Lobby.js';
+import { Lobby } from './component/Lobby.js';
 
 import {
   BrowserRouter as Router,

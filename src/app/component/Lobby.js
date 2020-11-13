@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
 // import 'bootstrap/dist/css/bootstrap.min.css';
-import './App.css';
+import '../App.css';
 import TableJoin from './TableJoin';
 import TableCreate from './TableCreate';
 
@@ -22,6 +22,7 @@ export class Lobby extends Component {
             gameId: null,
             gameData: null,
             tableCode: null,
+            playerName: null
         };
     }
 
@@ -30,7 +31,7 @@ export class Lobby extends Component {
         // Made a connection with server
         const socket = io(endpoint, { transports: ['websocket'] });
         socket.on("connected", data => {
-            this.setState({ socket: socket })
+            this.setState({ socket: socket });
         });
     }
     registrationConfirmation = (data) => {
@@ -47,10 +48,13 @@ export class Lobby extends Component {
         this.setState({ isGameStarted: false, gameId: null, gameData: null });
     };
 
-    changeTableCode = (data) => {
-        console.log(data.tableCode);
+    changeInfo = (data) => {
+        console.log(data.TableCode);
         this.setState({ tableCode: data.tableCode });
+        this.setState({ playerName: data.playerName });
+
     }
+
 
     render() {
         return (
@@ -58,7 +62,7 @@ export class Lobby extends Component {
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
                 {this.state.socket ?
                     this.state.tableCode ? <Table tableCode={this.state.tableCode} />
-                        : <TableCreate socket={this.state.socket} changeTableCode={this.changeTableCode} tableCode={this.state.tableCode} />
+                        : <TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
                     : <p>Loading...</p>
                 }
             </header>
