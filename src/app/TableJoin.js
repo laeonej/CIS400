@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
-class LobbyJoin extends Component {
+class TableJoin extends Component {
     constructor() {
         super();
         this.state = {
@@ -50,4 +50,4 @@ class LobbyJoin extends Component {
     }
 }
 
-export default LobbyJoin;
+export default TableJoin;

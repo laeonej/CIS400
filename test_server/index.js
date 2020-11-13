@@ -38,7 +38,7 @@ io.on('connection', client => {
             }
         }
 
-        sockets.emit("confirmCreateTable", { "tableCode": tableCode });
+        client.emit("confirmCreateTable", { "tableCode": result });
 
     });
     client.on('joinTable', data => {

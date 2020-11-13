@@ -1,19 +1,24 @@
 import React, { Component } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
-class LobbyCreate extends Component {
+class TableCreate extends Component {
     constructor() {
         super();
         this.state = {
-            tableCode: "",
             playerName: ""
         };
     }
     componentDidMount() {
         this.props.socket.on('confirmJoinTable', data => {
-            this.setState({ tableCode: data.tableCode });
+            this.props.changeTableCode(data.tableCode);
+            //this.setState({ tableCode: data.tableCode });
         });
     }
+
+    onPlayerNameChange = (e) => {
+        this.setState({ playerName: e.target.value });
+    }
+
     createTable = () => {
         if (this.state.playerName != "") {
             this.props.socket.emit('createTable', { "playerName": this.state.playerName });
@@ -22,9 +27,6 @@ class LobbyCreate extends Component {
         }
     }
 
-    onPlayerNameChange = (e) => {
-        this.setState({ playerName: e.target.value });
-    }
     render() {
         return (
             <Form>
@@ -42,4 +44,4 @@ class LobbyCreate extends Component {
     }
 }
 
-export default LobbyCreate;
+export default TableCreate;

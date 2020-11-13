@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 // import logo from './logo.svg';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import LobbyJoin from './LobbyJoin';
+import TableJoin from './TableJoin';
+import TableCreate from './TableCreate';
+
+import Table from './Table';
+
 // import ShowUsers from './components/ShowUsers';
 // import GamePlay from './components/GamePlay';
 // import { Container } from 'react-bootstrap';
@@ -17,6 +21,7 @@ export class Lobby extends Component {
             isGameStarted: false,
             gameId: null,
             gameData: null,
+            tableCode: null,
         };
     }
 
@@ -41,13 +46,21 @@ export class Lobby extends Component {
         alert("Opponent Left");
         this.setState({ isGameStarted: false, gameId: null, gameData: null });
     };
+
+    changeTableCode = (data) => {
+        console.log(data.tableCode);
+        this.setState({ tableCode: data.tableCode });
+    }
+
     render() {
         return (
             <header className="App-header">
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
-                {this.state.socket
-                    ? <LobbyJoin socket={this.state.socket} />
-                    : <p>Loading...</p>}
+                {this.state.socket ?
+                    this.state.tableCode ? <Table tableCode={this.state.tableCode} />
+                        : <TableCreate socket={this.state.socket} changeTableCode={this.changeTableCode} tableCode={this.state.tableCode} />
+                    : <p>Loading...</p>
+                }
             </header>
 
             //TODO ADD IN DIV THAT SHOWS BUTTONS TO CREATE/
