@@ -57,29 +57,27 @@ export class Menu extends React.Component {
     }
 
     handleCreateClick() {
-        this.setState({menu: false})
-        this.setState({createPage: true})
-        alert('create room handler')
+        this.setState({ menu: false })
+        this.setState({ createPage: true })
     }
 
     handleJoinClick() {
-        this.setState({menu: false})
-        this.setState({joinPage: true})
-        alert('join game handler')
+        this.setState({ menu: false })
+        this.setState({ joinPage: true })
     }
 
-    
+
     render() {
         return (
             <div>
-                <MainMenu bool={this.state.menu} 
-                            onJoinClick={this.handleJoinClick} 
-                            onCreateRoomClick={this.handleCreateRoomClick}/>
+                <MainMenu bool={this.state.menu}
+                    onJoinClick={this.handleJoinClick}
+                    onCreateRoomClick={this.handleCreateRoomClick} />
                 {/* renders when you click create */}
-                {this.state.createPage && 
+                {this.state.createPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table tableCode={this.state.tableCode} />
+                            this.state.tableCode ? <Table tableCode={this.state.tableCode} changeInfo={this.changeInfo} />
                                 : <TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
                             : <p>Loading...</p>
                         }
@@ -90,13 +88,13 @@ export class Menu extends React.Component {
                     <header className="App-header">
                         {this.state.socket ?
                             this.state.tableCode ? <Table tableCode={this.state.tableCode} />
-                              : <TableJoin socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
+                                : <TableJoin socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
                             : <p>Loading...</p>
                         }
                     </header>
                 }
             </div>
-                
+
         )
     }
 }
@@ -106,14 +104,14 @@ function MainMenu(props) {
 
     if (x) {
         return (<>
-        <AppAppBar/>
+            <AppAppBar />
             <div flex-grow={1}>
                 <Grid container spacing={10} justify='center'>
                     <Grid item >
-                        <Buttons function={props.onJoinClick} text='Join'/>
+                        <Buttons function={props.onJoinClick} text='Join' />
                     </Grid>
                     <Grid item >
-                        <Buttons function={props.onCreateRoomClick} text='Create Room'/>
+                        <Buttons function={props.onCreateRoomClick} text='Create Room' />
                     </Grid>
                 </Grid>
             </div>

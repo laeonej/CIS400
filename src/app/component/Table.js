@@ -1,19 +1,24 @@
 import React from 'react'
 import Card from './Card'
+import { Form, Button } from 'react-bootstrap';
 
 
 
-export default class Table extends React.Component {
+class Table extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             tableId: this.props.tableId,
             numOfCards: this.props.cardNum,
             cards: [],
-            playerName: ['laeone', 'younghu', 'jeff', 'james']
+            playerName: "laeone",
+            players: ['laeone', 'younghu', 'jeff', 'james']
         }
     }
 
+    exitTable = () => {
+        this.props.changeInfo({ "tableCode": null, "playerName": null });
+    }
 
     render() {
         return (
@@ -26,11 +31,18 @@ export default class Table extends React.Component {
                 <Card />
 
                 <h2> {this.props.tableCode} </h2>
-                <div> {this.state.playerName.map((player, index) => (
+                <div> {this.state.players.map((player, index) => (
                     <p key={index}> {player} </p>
                 ))}
                 </div >
+
+
+                <Button onClick={this.exitTable} variant="primary" type="button">
+                    Exit
+                </Button>
             </div>
+
         );
     }
 }
+export default Table;

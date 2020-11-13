@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import '../App.css';
 import TableJoin from './TableJoin';
 import TableCreate from './TableCreate';
-
 import Table from './Table';
 
 // import ShowUsers from './components/ShowUsers';
@@ -50,9 +49,7 @@ export class Lobby extends Component {
 
     changeInfo = (data) => {
         console.log(data.TableCode);
-        this.setState({ tableCode: data.tableCode });
-        this.setState({ playerName: data.playerName });
-
+        this.setState({ tableCode: data.tableCode, playerName: data.playerName });
     }
 
 
@@ -61,8 +58,8 @@ export class Lobby extends Component {
             <header className="App-header">
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
                 {this.state.socket ?
-                    this.state.tableCode ? <Table tableCode={this.state.tableCode} />
-                        : <TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
+                    this.state.tableCode ? <Table tableCode={this.state.tableCode} changeInfo={this.changeInfo} />
+                        : <div><TableJoin socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} /><TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} /></div>
                     : <p>Loading...</p>
                 }
             </header>

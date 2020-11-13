@@ -17,8 +17,8 @@ export default function AppRoute() {
       <Switch>
         <Route component={Login} exact path='/login' />
         <Route component={Menu} exact path='/menu' />
-        <Route component={Lobby} exact path='/' />
-        
+        <Route component={Menu} exact path='/' />
+
       </Switch>
     </Router>
   );

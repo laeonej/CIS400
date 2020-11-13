@@ -12,7 +12,7 @@ class TableJoin extends Component {
     componentDidMount() {
         this.props.socket.on('confirmJoinTable', data => {
             if (data) {
-                //redirect
+                this.props.changeInfo({ "tableCode": this.state.tableCode, "playerName": this.state.playerName });
             } else {
                 alert("No Lobby");
             }
