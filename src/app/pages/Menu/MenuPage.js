@@ -3,30 +3,68 @@ import Buttons from '../../component/Button';
 import AppAppBar from '../../component/AppAppbar';
 import Table from '../../component/Table';
 import { Grid } from '@material-ui/core'
-
-
+import TableCreate from '../../component/TableCreate';
+import TableJoin from '../../component/TableJoin';
+import io from "socket.io-client";
 
 
 export class Menu extends React.Component {
     constructor(props) {
         super(props)
         this.handleJoinClick = this.handleJoinClick.bind(this);
-        this.handleCreateRoomClick = this.handleCreateRoomClick.bind(this);
+        this.handleCreateRoomClick = this.handleCreateClick.bind(this);
         this.state = {
-            notInGame: true,
-            inGame: false
+            joinPage: false,
+            createPage: false,
+            menu: true,
+            endpoint: "http://localhost:5000",
+            socket: null,
+            isGameStarted: false,
+            gameId: null,
+            gameData: null,
+            tableCode: null,
+            playerName: null
         }
     }
 
-    handleCreateRoomClick() {
-        this.setState({notInGame: false})
-        this.setState({inGame: true})
+    componentDidMount() {
+        const { endpoint } = this.state;
+        // Made a connection with server
+        const socket = io(endpoint, { transports: ['websocket'] });
+        socket.on("connected", data => {
+            this.setState({ socket: socket });
+        });
+    }
+    registrationConfirmation = (data) => {
+        // If registration successfully redirect to player list
+        this.setState({ isRegistered: data });
+    };
+    gameStartConfirmation = (data) => {
+        // If select opponent player then start game and redirect to game play
+        this.setState({ isGameStarted: data.status, gameId: data.game_id, gameData: data.game_data });
+    };
+    opponentLeft = (data) => {
+        // If opponent left then get back from game play to player screen
+        alert("Opponent Left");
+        this.setState({ isGameStarted: false, gameId: null, gameData: null });
+    };
+
+    changeInfo = (data) => {
+        console.log(data.TableCode);
+        this.setState({ tableCode: data.tableCode });
+        this.setState({ playerName: data.playerName });
+
+    }
+
+    handleCreateClick() {
+        this.setState({menu: false})
+        this.setState({createPage: true})
         alert('create room handler')
     }
 
     handleJoinClick() {
-        this.setState({notInGame: false})
-        this.setState({inGame: true})
+        this.setState({menu: false})
+        this.setState({joinPage: true})
         alert('join game handler')
     }
 
@@ -34,17 +72,36 @@ export class Menu extends React.Component {
     render() {
         return (
             <div>
-                <NoGameMenu bool={this.state.notInGame} 
+                <MainMenu bool={this.state.menu} 
                             onJoinClick={this.handleJoinClick} 
                             onCreateRoomClick={this.handleCreateRoomClick}/>
-                <Game bool={this.state.inGame}/>
+                {/* renders when you click create */}
+                {this.state.createPage && 
+                    <header className="App-header">
+                        {this.state.socket ?
+                            this.state.tableCode ? <Table tableCode={this.state.tableCode} />
+                                : <TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
+                            : <p>Loading...</p>
+                        }
+                    </header>
+                }
+                {/* renders when you click join */}
+                {this.state.joinPage &&
+                    <header className="App-header">
+                        {this.state.socket ?
+                            this.state.tableCode ? <Table tableCode={this.state.tableCode} />
+                              : <TableJoin socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
+                            : <p>Loading...</p>
+                        }
+                    </header>
+                }
             </div>
                 
         )
     }
 }
 
-function NoGameMenu(props) {
+function MainMenu(props) {
     const x = props.bool
 
     if (x) {
@@ -61,39 +118,6 @@ function NoGameMenu(props) {
                 </Grid>
             </div>
         </>);
-    } else {
-        return (null)
-    }
-}
-
-function Game(props) {
-    const x = props.bool
-    if (x) {
-        return (
-            <>
-            <Grid container justify='center'>
-                <Grid item>
-                    <h1>Player 1</h1>
-                </Grid>
-            </Grid>
-            <Grid container justify='center'>
-                <Grid item sm >
-                        <h1 style={{paddingTop: 100, paddingLeft: 100}}>Player 2</h1>
-                </Grid>
-                <Grid item>
-                        <Table numOfCards={52} tableId={'12345'}/>
-                </Grid>
-                <Grid item sm>
-                    <h1 style={{paddingTop: 100, paddingLeft: 100}}>Player 3</h1>
-                </Grid>
-            </Grid>
-            <Grid container justify='center'>
-                <Grid item>
-                    <h1>Player 4</h1>
-                </Grid>
-            </Grid>
-            </>
-        );
     } else {
         return (null)
     }
