@@ -32,15 +32,54 @@ io.on('connection', client => {
             }
             if (!table[result]) {
                 table[result] = {
-                    players: [data.playerName]
+                    players: [data.playerName],
+                    cards: {
+                        1: { "dragPlayer": null, "posX": 0, "posY": 1, "offsetX": 0, "offsetY": 0 },
+                        2: { "dragPlayer": null, "posX": 0, "posY": 1, "offsetX": 0, "offsetY": 0 }
+                    }
                 }
                 flag = true;
             }
         }
-        console.log("this is printing");
         client.emit("confirmCreateTable", { "tableCode": result });
 
     });
+
+    client.on("holdCard", data => {
+        card = table[data.tableCode].cards[data.cardNum]
+        if (card.dragPlayer == null) {
+            card.dragPlayer = client.id;
+        }
+        io.emit("confirmHoldCard", { player: client.id, cardNum: data.cardNum });
+    });
+
+    client.on("dragCard", data => {
+        console.log("here")
+        if (data.dragPlayer == client.id) {
+            console.log("here2")
+            card = table[data.tableCode].cards[data.cardNum]
+            //card.posX = data.posX
+            //card.posY = data.posY
+            card.offsetX = data.offsetX
+            card.offsetY = data.offsetY
+            client.broadcast.emit("confirmDragCard", { data });
+            console.log(table[data.tableCode].cards)
+        } else {
+            console.log("wrong person cannot drag");
+        }
+    });
+
+
+    client.on("releaseCard", data => {
+        if (data.dragPlayer == client.id) {
+            data.dragPlayer = null
+            client.emit("confirmDragCard", true);
+        } else { //was not holding card
+            client.emit("confirmDragCard", false);
+        }
+    });
+
+
     client.on('joinTable', data => {
         // always assume the player is new
         var flag = true;

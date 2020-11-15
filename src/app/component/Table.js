@@ -2,8 +2,6 @@ import React from 'react'
 import Card from './Card'
 import { Form, Button } from 'react-bootstrap';
 
-
-
 class Table extends React.Component {
     constructor(props) {
         super(props);
@@ -27,8 +25,8 @@ class Table extends React.Component {
                 borderStyle: 'solid', borderWidth: 2, borderColor: 'black'
             }}>
                 {/* make these draggable */}
-                <Card />
-                <Card />
+                <Card tableCode={this.props.tableCode} socket={this.props.socket} cardNum={1} />
+                <Card tableCode={this.props.tableCode} socket={this.props.socket} cardNum={2} />
 
                 <h2> {this.props.tableCode} </h2>
                 <div> {this.state.players.map((player, index) => (
