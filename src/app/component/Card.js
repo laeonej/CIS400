@@ -52,9 +52,7 @@ export default class Card extends React.Component {
         // IE uses srcElement, others use target
         var targ = e.target ? e.target : e.srcElement;
 
-        console.log("starDrag");
-
-        if (targ.className != 'dragme') { return };
+        this.setState({ offsetX: e.clientX, offsetY: e.clientY });
 
         if (!targ.style.left) { targ.style.left = '0px' };
         if (!targ.style.top) { targ.style.top = '0px' };
@@ -90,7 +88,6 @@ export default class Card extends React.Component {
     stopDrag = (e) => {
         this.setState({ drag: false })
         this.props.socket.emit('endDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.state.playerName, "posX": this.state.posX, "posY": this.state.posY });
-
     }
 
     render() {

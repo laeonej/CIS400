@@ -25,13 +25,8 @@ class Table extends React.Component {
                 borderStyle: 'solid', borderWidth: 2, borderColor: 'black'
             }}>
                 {/* make these draggable */}
-<<<<<<< HEAD
                 <Card tableCode={this.props.tableCode} cardId={1} socket={this.props.socket} />
                 <Card tableCode={this.props.tableCode} cardId={2} socket={this.props.socket} />
-=======
-                <Card tableCode={this.props.tableCode} socket={this.props.socket} cardNum={1} />
-                <Card tableCode={this.props.tableCode} socket={this.props.socket} cardNum={2} />
->>>>>>> ed804d54e4780c7171cd5a64ae86898dc1d4eed0
 
                 <h2> {this.props.tableCode} </h2>
                 <div> {this.state.players.map((player, index) => (
