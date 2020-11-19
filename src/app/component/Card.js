@@ -54,7 +54,7 @@ export default class Card extends React.Component {
 
         console.log("starDrag");
 
-        this.setState({ offsetX: e.clientX, offsetY: e.clientY });
+        if (targ.className != 'dragme') { return };
 
         if (!targ.style.left) { targ.style.left = '0px' };
         if (!targ.style.top) { targ.style.top = '0px' };
