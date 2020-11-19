@@ -77,7 +77,7 @@ export class Menu extends React.Component {
                 {this.state.createPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table tableCode={this.state.tableCode} changeInfo={this.changeInfo} />
+                            this.state.tableCode ? <Table tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} />
                                 : <TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
                             : <p>Loading...</p>
                         }
@@ -87,7 +87,7 @@ export class Menu extends React.Component {
                 {this.state.joinPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table tableCode={this.state.tableCode} />
+                            this.state.tableCode ? <Table tableCode={this.state.tableCode} socket={this.state.socket} />
                                 : <TableJoin socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
                             : <p>Loading...</p>
                         }

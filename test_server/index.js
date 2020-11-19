@@ -25,22 +25,28 @@ io.on('connection', client => {
         var flag = false;
 
         while (!flag) {
-            var result = "";
+            var tableCode = "";
             var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             for (var i = 0; i < 6; i++) {
-                result += characters.charAt(Math.floor(Math.random() * characters.length));
+                tableCode += characters.charAt(Math.floor(Math.random() * characters.length));
             }
-            if (!table[result]) {
-                table[result] = {
-                    players: [data.playerName]
+            if (!table[tableCode]) {
+                table[tableCode] = {
+                    players: [data.playerName],
+                    cards: {
+                        1: { playerName: null, posX: 0, posY: 0 },
+                        2: { playerName: null, posX: 0, posY: 0 }
+                    }
+
                 }
                 flag = true;
             }
         }
         console.log("this is printing");
-        client.emit("confirmCreateTable", { "tableCode": result });
+        client.emit("confirmCreateTable", { "tableCode": tableCode });
 
     });
+
     client.on('joinTable', data => {
         // always assume the player is new
         var flag = true;
@@ -58,6 +64,33 @@ io.on('connection', client => {
 
         client.emit("confirmJoinTable", flag);
     });
+
+    client.on('startDrag', data => {
+        var flag = true;
+
+        console.log("Table code" + data.tableCode);
+        console.log(table[data.tableCode]);
+        // another player has already start dragging this card
+        if (table[data.tableCode]) {
+            if (table[data.tableCode].cards[data.cardId].playerName != null) {
+                flag = false;
+            } else {
+                table[data.tableCode].cards[data.cardId] = { playerName: data.playerName, posX: data.posX, posY: data.posY }
+            }
+        }
+
+        client.emit("confirmStartDrag", { cardId: data.cardId, flag: flag });
+    })
+
+    client.on('midDrag', data => {
+        table[data.tableCode].cards[data.cardId] = { playerName: data.playerName, posX: data.posX, posY: data.posY };
+
+        client.broadcast.emit("confirmMidDrag", { cardId: data.cardId, posX: data.posX, posY: data.posY });
+    })
+
+    client.on('stopDrag', data => {
+        table[data.tableCode].cards[data.cardId] = { playerName: null, posX: data.posX, posY: data.posY };
+    })
 
 
     // STEP 6 ::=> It is a event which will handle user registration process

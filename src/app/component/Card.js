@@ -5,11 +5,6 @@ import Draggable from 'react-draggable';
 var cardHeight = 80;
 var cardWidth = 0.75 * cardHeight;
 
-
-
-
-
-
 export default class Card extends React.Component {
     constructor(props) {
         super();
@@ -18,12 +13,32 @@ export default class Card extends React.Component {
             drag: false,
             frontSide: false,
             backSide: true,
-            posX: 0,
-            posY: 0,
-            offsetX: 0,
-            offsetY: 0,
+            posX: 100,
+            posY: 100,
+            tempX: 0,
+            tempY: 0,
+            offsetX: 300,
+            offsetY: 300,
             imageId: "abc.jpg"
         }
+    }
+
+    componentDidMount() {
+        this.props.socket.on('confirmStartDrag', data => {
+            if (data.cardId == this.props.cardId && data.flag) {
+                this.setState({ "drag": true });
+            }
+            //this.setState({ tableCode: data.tableCode });
+        });
+
+        this.props.socket.on('confirmMidDrag', data => {
+            if (data.cardId == this.props.cardId) {
+                this.setState({ "posX": data.posX, "posY": data.posY });
+            }
+            //this.setState({ tableCode: data.tableCode });
+        });
+
+
     }
 
     startDrag = (e) => {
@@ -31,50 +46,61 @@ export default class Card extends React.Component {
         if (!e) {
             var e = window.event;
         }
+
         if (e.preventDefault) e.preventDefault();
 
         // IE uses srcElement, others use target
         var targ = e.target ? e.target : e.srcElement;
 
-        if (targ.className != 'dragme') { return };
-        // calculate event X, Y coordinates
+        console.log("starDrag");
 
         this.setState({ offsetX: e.clientX, offsetY: e.clientY });
 
-        // assign default values for top and left properties
         if (!targ.style.left) { targ.style.left = '0px' };
         if (!targ.style.top) { targ.style.top = '0px' };
 
-        // calculate integer values for top and left 
-        // properties
 
-        this.setState({ posX: parseInt(targ.style.left), posY: parseInt(targ.style.left) })
-        this.setState({ drag: true })
+        console.log(e.clientX);
+        console.log(targ.style.left);
 
-        // move div element
+        this.setState({ tempX: this.state.posX, tempY: this.state.posY })
+
+        this.props.socket.emit('startDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.state.playerName, "posX": this.state.posX, "posY": this.state.posY });
+
         document.onmousemove = this.dragDiv;
         return false;
 
     }
+
     dragDiv = (e) => {
         if (!this.state.drag) { return };
         if (!e) { var e = window.event };
-        var targ = e.target ? e.target : e.srcElement;
-        // move div element
-        targ.style.left = this.state.posX + e.clientX - this.state.offsetX + 'px';
-        targ.style.top = this.state.posY + e.clientY - this.state.offsetY + 'px';
+
+        var left = this.state.tempX + e.clientX - this.state.offsetX + 'px';
+        var top = this.state.tempY + e.clientY - this.state.offsetY + 'px';
+        this.setState({ posX: parseInt(left), posY: parseInt(top) })
+
+        this.props.socket.emit('midDrag', {
+            "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.state.playerName, "posX": this.state.posX, "posY": this.state.posY
+        });
+        document.onmouseup = this.stopDrag;
         return false;
     }
+
     stopDrag = (e) => {
         this.setState({ drag: false })
+        this.props.socket.emit('endDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.state.playerName, "posX": this.state.posX, "posY": this.state.posY });
 
     }
 
     render() {
         return (
-            <Draggable onStart={this.startDrag}
-                onDrag={this.dragDiv}
-                onStop={this.stopDrag} >
+            <Draggable
+                position={{
+                    x: this.state.posX, y: this.state.posY
+                }}
+                onStart={this.startDrag}
+            >
                 <div style={{ position: 'absolute' }}>
                     <img src={cardback} alt='card' height={cardHeight} width={cardWidth} />
                 </div>
