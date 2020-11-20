@@ -32,7 +32,7 @@ class TableCreate extends Component {
         return (
             <Form>
                 <Form.Group>
-                    <Form.Label>Enter Lobby Code and Player Name</Form.Label>
+                    <Form.Label>Enter Lobby Code</Form.Label>
                     <br />
                     <Form.Control type="text" onChange={this.onPlayerNameChange} placeholder="Enter Player Name" />
                     <br />
