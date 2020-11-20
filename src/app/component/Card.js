@@ -1,5 +1,5 @@
 import React from 'react'
-import cardback from '../images/card/image001.jpg'
+import cardback from '../images/card/back.jpg'
 import Draggable from 'react-draggable';
 
 var cardHeight = 80;
@@ -8,10 +8,9 @@ var cardWidth = 0.75 * cardHeight;
 export default class Card extends React.Component {
     constructor(props) {
         super();
-        // this.handleClick = this.handleClick.bind(this)
+        this.handleClick = this.handleClick.bind(this)
         this.state = {
             drag: false,
-            frontSide: false,
             backSide: true,
             posX: 100,
             posY: 100,
@@ -21,6 +20,18 @@ export default class Card extends React.Component {
             offsetY: 300,
             imageId: "abc.jpg"
         }
+    }
+
+    handleClick() {
+        
+        this.setState({ drag: false })
+        if (this.state.backSide) {
+            this.setState({ backSide: false})
+        } else {
+            this.setState({ backSide: true})
+        }
+
+        document.onmouseup = null
     }
 
     componentDidMount() {
@@ -58,14 +69,17 @@ export default class Card extends React.Component {
         if (!targ.style.top) { targ.style.top = '0px' };
 
 
-        console.log(e.clientX);
-        console.log(targ.style.left);
+        // console.log(e.clientX);
+        // console.log(targ.style.left);
 
         this.setState({ tempX: this.state.posX, tempY: this.state.posY })
 
         this.props.socket.emit('startDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.state.playerName, "posX": this.state.posX, "posY": this.state.posY });
 
+        document.onmouseup = this.handleClick;
+        
         document.onmousemove = this.dragDiv;
+
         return false;
 
     }
@@ -92,6 +106,8 @@ export default class Card extends React.Component {
 
     render() {
         return (
+            <>
+            {this.state.backSide ?
             <Draggable
                 position={{
                     x: this.state.posX, y: this.state.posY
@@ -101,8 +117,24 @@ export default class Card extends React.Component {
                 <div style={{ position: 'absolute' }}>
                     <img src={cardback} alt='card' height={cardHeight} width={cardWidth} />
                 </div>
-            </Draggable>
+            </Draggable> 
+            
+            :
 
+            <Draggable
+                position={{
+                    x: this.state.posX, y: this.state.posY
+                }}
+                onStart={this.startDrag}
+            >
+                <div style={{ position: 'absolute' }}>
+                    <img src={this.props.frontSide} alt='card' height={cardHeight} width={cardWidth} />
+                </div>
+            </Draggable> 
+
+            }
+            
+            </>
         );
     }
 }

@@ -1,6 +1,8 @@
 import React from 'react'
-import Card from './Card'
-import { Form, Button } from 'react-bootstrap';
+import Card from './Card';
+import cardFront from '../images/cardFronts/cardFront.js'
+import { Button } from 'react-bootstrap';
+
 
 class Table extends React.Component {
     constructor(props) {
@@ -18,16 +20,28 @@ class Table extends React.Component {
         this.props.changeInfo({ "tableCode": null, "playerName": null });
     }
 
+    componentWillMount() {
+        console.log("hello world")
+        let cardDiv = cardFront.map(({id, src}) => 
+            <Card frontSide={src} tableCode={this.props.tableCode} cardId={id} socket={this.props.socket} />
+        );
+
+        this.setState({
+            cards: cardDiv
+        })
+    }
+
+    
+
     render() {
         return (
             <div style={{
                 backgroundColor: 'green', height: 400, width: 800,
                 borderStyle: 'solid', borderWidth: 2, borderColor: 'black'
             }}>
-                {/* make these draggable */}
-                <Card tableCode={this.props.tableCode} cardId={1} socket={this.props.socket} />
-                <Card tableCode={this.props.tableCode} cardId={2} socket={this.props.socket} />
 
+                {this.state.cards}
+                
                 <h2> {this.props.tableCode} </h2>
                 <div> {this.state.players.map((player, index) => (
                     <p key={index}> {player} </p>
