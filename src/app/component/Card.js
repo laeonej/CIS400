@@ -23,33 +23,38 @@ export default class Card extends React.Component {
     }
 
     handleClick() {
-        
+
         this.setState({ drag: false })
         if (this.state.backSide) {
-            this.setState({ backSide: false})
+            this.setState({ backSide: false })
         } else {
-            this.setState({ backSide: true})
+            this.setState({ backSide: true })
         }
+
+        this.props.socket.emit("flipCard", { tableCode: this.props.tableCode, cardId: this.props.cardId, backSide: this.state.backSide })
 
         document.onmouseup = null
     }
 
     componentDidMount() {
+
+        this.props.socket.on('confirmFlipCard', data => {
+            if (data.tableCode == this.props.tableCode && data.cardId == this.props.cardId) {
+                this.setState({ backSide: data.backSide });
+            }
+        });
+
         this.props.socket.on('confirmStartDrag', data => {
             if (data.cardId == this.props.cardId && data.flag) {
                 this.setState({ "drag": true });
             }
-            //this.setState({ tableCode: data.tableCode });
         });
 
         this.props.socket.on('confirmMidDrag', data => {
-            if (data.cardId == this.props.cardId) {
+            if (data.tableCode == this.props.tableCode && data.cardId == this.props.cardId) {
                 this.setState({ "posX": data.posX, "posY": data.posY });
             }
-            //this.setState({ tableCode: data.tableCode });
         });
-
-
     }
 
     startDrag = (e) => {
@@ -77,7 +82,7 @@ export default class Card extends React.Component {
         this.props.socket.emit('startDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.state.playerName, "posX": this.state.posX, "posY": this.state.posY });
 
         document.onmouseup = this.handleClick;
-        
+
         document.onmousemove = this.dragDiv;
 
         return false;
@@ -107,33 +112,33 @@ export default class Card extends React.Component {
     render() {
         return (
             <>
-            {this.state.backSide ?
-            <Draggable
-                position={{
-                    x: this.state.posX, y: this.state.posY
-                }}
-                onStart={this.startDrag}
-            >
-                <div style={{ position: 'absolute' }}>
-                    <img src={cardback} alt='card' height={cardHeight} width={cardWidth} />
-                </div>
-            </Draggable> 
-            
-            :
+                {this.state.backSide ?
+                    <Draggable
+                        position={{
+                            x: this.state.posX, y: this.state.posY
+                        }}
+                        onStart={this.startDrag}
+                    >
+                        <div style={{ position: 'absolute' }}>
+                            <img src={cardback} alt='card' height={cardHeight} width={cardWidth} />
+                        </div>
+                    </Draggable>
 
-            <Draggable
-                position={{
-                    x: this.state.posX, y: this.state.posY
-                }}
-                onStart={this.startDrag}
-            >
-                <div style={{ position: 'absolute' }}>
-                    <img src={this.props.frontSide} alt='card' height={cardHeight} width={cardWidth} />
-                </div>
-            </Draggable> 
+                    :
 
-            }
-            
+                    <Draggable
+                        position={{
+                            x: this.state.posX, y: this.state.posY
+                        }}
+                        onStart={this.startDrag}
+                    >
+                        <div style={{ position: 'absolute' }}>
+                            <img src={this.props.frontSide} alt='card' height={cardHeight} width={cardWidth} />
+                        </div>
+                    </Draggable>
+
+                }
+
             </>
         );
     }

@@ -8,10 +8,11 @@ class TableCreate extends Component {
             playerName: ""
         };
     }
+
     componentDidMount() {
         this.props.socket.on('confirmCreateTable', data => {
-            this.props.changeInfo({ "tableCode": data.tableCode, "playerName": this.state.playerName });
-            //this.setState({ tableCode: data.tableCode });
+            console.log(data.players);
+            this.props.changeInfo({ "tableCode": data.tableCode, "playerName": this.state.playerName, "players": data.players });
         });
     }
 

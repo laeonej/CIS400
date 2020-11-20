@@ -9,15 +9,17 @@ class TableJoin extends Component {
             playerName: ""
         };
     }
+
     componentDidMount() {
         this.props.socket.on('confirmJoinTable', data => {
-            if (data) {
-                this.props.changeInfo({ "tableCode": this.state.tableCode, "playerName": this.state.playerName });
+            if (data.flag) {
+                this.props.changeInfo({ "tableCode": this.state.tableCode, "playerName": this.state.playerName, "players": data.players });
             } else {
                 alert("No Lobby");
             }
         });
     }
+
     joinTable = () => {
         if (this.state.tableCode != "" && this.state.playerName != "") {
             this.props.socket.emit('joinTable', { "tableCode": this.state.tableCode, "playerName": this.state.playerName });
@@ -25,12 +27,15 @@ class TableJoin extends Component {
             alert("Enter All Inputs");
         }
     }
+
     onTableCodeChange = (e) => {
         this.setState({ tableCode: e.target.value });
     }
+
     onPlayerNameChange = (e) => {
         this.setState({ playerName: e.target.value });
     }
+
     render() {
         return (
             <Form>

@@ -8,21 +8,18 @@ class Table extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tableId: this.props.tableId,
-            numOfCards: this.props.cardNum,
-            cards: [],
-            playerName: "laeone",
-            players: ['laeone', 'younghu', 'jeff', 'james']
+            cards: []
         }
     }
 
     exitTable = () => {
+        this.props.socket.emit("exitTable", { "tableCode": this.props.tableCode, "playerName": this.props.playerName })
         this.props.changeInfo({ "tableCode": null, "playerName": null });
     }
 
     componentWillMount() {
         console.log("hello world")
-        let cardDiv = cardFront.map(({id, src}) => 
+        let cardDiv = cardFront.map(({ id, src }) =>
             <Card frontSide={src} tableCode={this.props.tableCode} cardId={id} socket={this.props.socket} />
         );
 
@@ -31,9 +28,8 @@ class Table extends React.Component {
         })
     }
 
-    
-
     render() {
+        console.log(this.props.players)
         return (
             <div style={{
                 backgroundColor: 'green', height: 400, width: 800,
@@ -41,13 +37,15 @@ class Table extends React.Component {
             }}>
 
                 {this.state.cards}
-                
-                <h2> {this.props.tableCode} </h2>
-                <div> {this.state.players.map((player, index) => (
-                    <p key={index}> {player} </p>
-                ))}
-                </div >
 
+                <h2> {this.props.tableCode} </h2>
+                {this.props.players ?
+                    <div> {[...this.props.players].map((player, index) => (
+                        <p key={index}> {player} </p>
+                    ))}
+                    </div > :
+                    <div></div>
+                }
 
                 <Button onClick={this.exitTable} variant="primary" type="button">
                     Exit

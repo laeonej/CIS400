@@ -23,7 +23,8 @@ export class Menu extends React.Component {
             gameId: null,
             gameData: null,
             tableCode: null,
-            playerName: null
+            playerName: null,
+            players: null,
         }
     }
 
@@ -34,25 +35,32 @@ export class Menu extends React.Component {
         socket.on("connected", data => {
             this.setState({ socket: socket });
         });
+
+        socket.on("confirmNewPlayer", data => {
+            if (data.tableCode = this.state.tableCode) {
+                this.setState({ players: data.players });
+            }
+        });
     }
-    registrationConfirmation = (data) => {
-        // If registration successfully redirect to player list
-        this.setState({ isRegistered: data });
-    };
-    gameStartConfirmation = (data) => {
-        // If select opponent player then start game and redirect to game play
-        this.setState({ isGameStarted: data.status, gameId: data.game_id, gameData: data.game_data });
-    };
-    opponentLeft = (data) => {
-        // If opponent left then get back from game play to player screen
-        alert("Opponent Left");
-        this.setState({ isGameStarted: false, gameId: null, gameData: null });
-    };
+
+    // registrationConfirmation = (data) => {
+    //     // If registration successfully redirect to player list
+    //     this.setState({ isRegistered: data });
+    // };
+    // gameStartConfirmation = (data) => {
+    //     // If select opponent player then start game and redirect to game play
+    //     this.setState({ isGameStarted: data.status, gameId: data.game_id, gameData: data.game_data });
+    // };
+    // opponentLeft = (data) => {
+    //     // If opponent left then get back from game play to player screen
+    //     alert("Opponent Left");
+    //     this.setState({ isGameStarted: false, gameId: null, gameData: null });
+    // };
 
     changeInfo = (data) => {
-        console.log(data.TableCode);
         this.setState({ tableCode: data.tableCode });
         this.setState({ playerName: data.playerName });
+        this.setState({ players: data.players });
 
     }
 
@@ -66,7 +74,6 @@ export class Menu extends React.Component {
         this.setState({ joinPage: true })
     }
 
-
     render() {
         return (
             <div>
@@ -77,7 +84,7 @@ export class Menu extends React.Component {
                 {this.state.createPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} />
+                            this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} />
                                 : <TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
                             : <p>Loading...</p>
                         }
@@ -87,7 +94,7 @@ export class Menu extends React.Component {
                 {this.state.joinPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table tableCode={this.state.tableCode} socket={this.state.socket} />
+                            this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} />
                                 : <TableJoin socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
                             : <p>Loading...</p>
                         }

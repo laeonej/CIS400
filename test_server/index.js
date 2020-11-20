@@ -34,93 +34,87 @@ io.on('connection', client => {
                 table[tableCode] = {
                     players: [data.playerName],
                     cards: {
-                        0: { playerName: null, posX: 0, posY: 0 },
-                        1: { playerName: null, posX: 0, posY: 0 },
-                        2: { playerName: null, posX: 0, posY: 0 },
-                        3: { playerName: null, posX: 0, posY: 0 },
-                        4: { playerName: null, posX: 0, posY: 0 },
-                        5: { playerName: null, posX: 0, posY: 0 },
-                        6: { playerName: null, posX: 0, posY: 0 },
-                        7: { playerName: null, posX: 0, posY: 0 },
-                        8: { playerName: null, posX: 0, posY: 0 },
-                        9: { playerName: null, posX: 0, posY: 0 },
-                        10: { playerName: null, posX: 0, posY: 0 },
-                        11: { playerName: null, posX: 0, posY: 0 },
-                        12: { playerName: null, posX: 0, posY: 0 },
-                        13: { playerName: null, posX: 0, posY: 0 },
-                        14: { playerName: null, posX: 0, posY: 0 },
-                        15: { playerName: null, posX: 0, posY: 0 },
-                        16: { playerName: null, posX: 0, posY: 0 },
-                        17: { playerName: null, posX: 0, posY: 0 },
-                        18: { playerName: null, posX: 0, posY: 0 },
-                        19: { playerName: null, posX: 0, posY: 0 },
-                        20: { playerName: null, posX: 0, posY: 0 },
-                        21: { playerName: null, posX: 0, posY: 0 },
-                        22: { playerName: null, posX: 0, posY: 0 },
-                        23: { playerName: null, posX: 0, posY: 0 },
-                        24: { playerName: null, posX: 0, posY: 0 },
-                        25: { playerName: null, posX: 0, posY: 0 },
-                        26: { playerName: null, posX: 0, posY: 0 },
-                        27: { playerName: null, posX: 0, posY: 0 },
-                        28: { playerName: null, posX: 0, posY: 0 },
-                        29: { playerName: null, posX: 0, posY: 0 },
-                        30: { playerName: null, posX: 0, posY: 0 },
-                        31: { playerName: null, posX: 0, posY: 0 },
-                        32: { playerName: null, posX: 0, posY: 0 },
-                        33: { playerName: null, posX: 0, posY: 0 },
-                        34: { playerName: null, posX: 0, posY: 0 },
-                        35: { playerName: null, posX: 0, posY: 0 },
-                        36: { playerName: null, posX: 0, posY: 0 },
-                        37: { playerName: null, posX: 0, posY: 0 },
-                        38: { playerName: null, posX: 0, posY: 0 },
-                        39: { playerName: null, posX: 0, posY: 0 },
-                        40: { playerName: null, posX: 0, posY: 0 },
-                        41: { playerName: null, posX: 0, posY: 0 },
-                        42: { playerName: null, posX: 0, posY: 0 },
-                        43: { playerName: null, posX: 0, posY: 0 },
-                        44: { playerName: null, posX: 0, posY: 0 },
-                        45: { playerName: null, posX: 0, posY: 0 },
-                        46: { playerName: null, posX: 0, posY: 0 },
-                        47: { playerName: null, posX: 0, posY: 0 },
-                        48: { playerName: null, posX: 0, posY: 0 },
-                        49: { playerName: null, posX: 0, posY: 0 },
-                        50: { playerName: null, posX: 0, posY: 0 },
-                        51: { playerName: null, posX: 0, posY: 0 }
-                        
+                        0: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        1: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        2: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        3: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        4: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        5: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        6: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        7: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        8: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        9: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        10: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        11: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        12: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        13: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        14: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        15: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        16: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        17: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        18: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        19: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        20: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        21: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        22: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        23: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        24: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        25: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        26: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        27: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        28: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        29: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        30: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        31: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        32: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        33: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        34: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        35: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        36: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        37: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        38: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        39: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        40: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        41: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        42: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        43: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        44: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        45: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        46: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        47: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        48: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        49: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        50: { playerName: null, posX: 0, posY: 0, backSide: true },
+                        51: { playerName: null, posX: 0, posY: 0, backSide: true }
                     }
-
                 }
                 flag = true;
             }
         }
-        console.log("this is printing");
-        client.emit("confirmCreateTable", { "tableCode": tableCode });
-
+        client.emit("confirmCreateTable", { tableCode: tableCode, players: table[tableCode].players });
     });
 
     client.on('joinTable', data => {
         // always assume the player is new
         var flag = true;
+
         if (table[data.tableCode]) {
             sockets[client.id] = {
                 tableCode: data.tableCode,
                 playerName: data.playerName
             };
-
             //add player to table
             table[data.tableCode].players.push(data.playerName)
+            client.broadcast.emit("confirmNewPlayer", { tableCode: data.tableCode, players: table[data.tableCode].players });
         } else {
             flag = false;
         }
-
-        client.emit("confirmJoinTable", flag);
+        client.emit("confirmJoinTable", { flag: flag, players: table[data.tableCode] ? table[data.tableCode].players : null });
     });
 
     client.on('startDrag', data => {
         var flag = true;
 
-        console.log("Table code" + data.tableCode);
-        console.log(table[data.tableCode]);
         // another player has already start dragging this card
         if (table[data.tableCode]) {
             if (table[data.tableCode].cards[data.cardId].playerName != null) {
@@ -136,13 +130,24 @@ io.on('connection', client => {
     client.on('midDrag', data => {
         table[data.tableCode].cards[data.cardId] = { playerName: data.playerName, posX: data.posX, posY: data.posY };
 
-        client.broadcast.emit("confirmMidDrag", { cardId: data.cardId, posX: data.posX, posY: data.posY });
+        client.broadcast.emit("confirmMidDrag", { tableCode: data.tableCode, cardId: data.cardId, posX: data.posX, posY: data.posY });
     })
 
     client.on('stopDrag', data => {
         table[data.tableCode].cards[data.cardId] = { playerName: null, posX: data.posX, posY: data.posY };
     })
 
+    client.on("flipCard", data => {
+        table[data.tableCode].cards[data.cardId].backSide = data.backSide
+        client.broadcast.emit("confirmFlipCard", { tableCode: data.tableCode, cardId: data.cardId, backSide: data.backSide });
+    })
+
+    client.on("exitTable", data => {
+        const i = table[data.tableCode].players.indexOf(data.playerName);
+        table[data.tableCode].players.splice(i, 1);
+
+        client.broadcast.emit("confirmNewPlayer", { tableCode: data.tableCode, players: table[data.tableCode].players });
+    })
 
     // STEP 6 ::=> It is a event which will handle user registration process
     client.on('checkUserDetail', data => {
@@ -176,7 +181,6 @@ io.on('connection', client => {
             }
 
         }
-        console.log("Is New User " + !flag);
         client.emit('checkUserDetailResponse', !flag);
     });
 
