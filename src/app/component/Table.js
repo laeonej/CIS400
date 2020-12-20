@@ -18,9 +18,9 @@ class Table extends React.Component {
     }
 
     componentWillMount() {
-        console.log("hello world")
+        console.log(this.props.playerName);
         let cardDiv = cardFront.map(({ id, src }) =>
-            <Card frontSide={src} tableCode={this.props.tableCode} cardId={id} socket={this.props.socket} />
+            <Card frontSide={src} tableCode={this.props.tableCode} cardId={id} socket={this.props.socket} playerName={this.props.playerName} />
         );
 
         this.setState({
@@ -32,7 +32,7 @@ class Table extends React.Component {
         console.log(this.props.players)
         return (
             <div style={{
-                backgroundColor: 'green', height: 400, width: 800,
+                backgroundColor: 'green', height: 400, width: 500,
                 borderStyle: 'solid', borderWidth: 2, borderColor: 'black'
             }}>
 
