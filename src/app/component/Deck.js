@@ -25,7 +25,7 @@ class Deck extends React.Component {
             cards: [],
             orphanCards: [],
             posX: 325,
-            posY: 325,
+            posY: 350,
             offsetX: 0,
             offsetY: 0,
             drag: false,
@@ -294,18 +294,23 @@ class Deck extends React.Component {
     render() {
         return (
             <div>
-                <Button onClick={this.dealCard.bind(this)} variant="primary" type="button">
+                {/* <Button onClick={this.dealCard.bind(this)} variant="primary" type="button">
                     Deal Cards
-                </Button>
+                </Button> */}
                 <div id="deck" style={{
                     position: "absolute",
                     top: this.state.posY, left: this.state.posX
                 }}>
-                    <Draggable
-                        onStart={this.startDrag}
-                    >
-                        <div>hELLO</div>
-                    </Draggable>
+                    <div id="buttons">
+                        <Draggable
+                            onStart={this.startDrag}
+                        >
+                            <h2 id="move-button">Move</h2>
+                        </Draggable>
+                        <h2 id="deal-button" onClick={this.dealCard.bind(this)} variant="primary" type="button">
+                            Deal
+                         </h2>
+                    </div>
                     {cardFront.map(({ id, src }) =>
                         <Card
                             removeCard={this.removeCard.bind(this)}
@@ -327,7 +332,7 @@ class Deck extends React.Component {
                 <div id="orphan-container">
                     {this.state.orphanCards}
                 </div>
-            </div>
+            </div >
 
         )
     }

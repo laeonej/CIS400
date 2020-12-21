@@ -45,3 +45,39 @@
     transform: rotate(360deg);
   }
 }
+
+
+#move-button {
+  border: 1px solid white;
+  padding: 3px;
+  font-size: 10px;
+  float: left;
+  margin-left: -35px;
+  margin-top: 10px;
+  transform: rotate(-90deg) !important;
+
+
+}
+
+#deal-button {
+  border: 1px solid white;
+  padding: 3px;
+  padding-right: 4px;
+  font-size: 10px;
+  float: left;
+  margin-left: -35px;
+  margin-top: 54px;
+  transform: rotate(-90deg) !important;
+
+}
+
+#move-button:hover {
+  cursor: pointer;
+  background-color: white;
+  color: green;
+}
+#deal-button:hover {
+  cursor: pointer;
+  background-color: white;
+  color: green;
+}
