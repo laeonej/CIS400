@@ -20,7 +20,7 @@ function TableJoin(props) {
         })
 
         
-        if (user !== null || user !== undefined) {
+        if (user !== null && user !== undefined) {
             name = user.displayName
             setPlayerName(name)
         }
