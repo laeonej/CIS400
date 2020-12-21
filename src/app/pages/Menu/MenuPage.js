@@ -37,7 +37,7 @@ export class Menu extends React.Component {
         });
 
         socket.on("confirmNewPlayer", data => {
-            if (data.tableCode = this.state.tableCode) {
+            if (data.tableCode === this.state.tableCode) {
                 this.setState({ players: data.players });
             }
         });
@@ -112,7 +112,7 @@ function MainMenu(props) {
 
     if (x) {
         return (<>
-            <MenuBar />
+            <MenuBar/>
             <div flex-grow={1}>
                 <Grid container spacing={10} justify='center'>
                     <Grid item >

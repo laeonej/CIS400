@@ -1,7 +1,8 @@
 import React from "react"
 import MenuBar from "../../component/MenuBar"
 import { Card, CardContent, TextField, Typography, Button, Divider, Grid, Link } from '@material-ui/core'
-
+import Google from '../../images/logo/google.jpg'
+import { auth } from '../../firebase.js'
 
 export class Login extends React.Component {
 
@@ -25,8 +26,11 @@ export class Login extends React.Component {
     }
 
 
-    login() {
-        //firebase stuff goes here
+    async login() {
+        await auth.signInWithEmailAndPassword(this.state.email, this.state.password)
+        .catch(err => {
+            console.error('Error signing in with email and password', err)
+        })
     }
 
     render() {
@@ -53,8 +57,11 @@ export class Login extends React.Component {
                                             <Button variant='contained' color='primary' onClick={this.login}>Login</Button>
                                         </Grid>
                                         <Grid item xs>
+                                            <img src={Google} alt="Sign in with Google" style={{height: '40px', width: '40px'}}/>
+                                        </Grid>
+                                        <Grid item xs>
                                             <Link href='/signup'>
-                                                Don't have an account?
+                                                Don't have an account? Sign up here.
                                             </Link>
                                         </Grid>
                                     </Grid>  

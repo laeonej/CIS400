@@ -1,6 +1,8 @@
 import React from 'react'
 import MenuBar from "../../component/MenuBar"
 import { Card, CardContent, TextField, Typography, Button, Divider, Grid, Link } from '@material-ui/core'
+import Google from '../../images/logo/google.jpg'
+import { auth, generateUserDocument } from '../../firebase.js'
 
 export default class SignUp extends React.Component {
 
@@ -15,7 +17,8 @@ export default class SignUp extends React.Component {
             email : '',
             username: '',
             password: '',
-            confirm: ''
+            confirm: '',
+            error: false,
         }
     }
 
@@ -36,7 +39,18 @@ export default class SignUp extends React.Component {
     }
 
     signup() {
-
+        if (this.state.password !== this.state.confirm) {
+            this.setState({error: true})
+        } else {
+            auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
+            .then(async (user) => {
+                console.log(user)
+                await user.user.updateProfile({
+                    displayName: this.state.username
+                })
+                generateUserDocument(user.user)
+            })
+        }
     }
 
 
@@ -44,7 +58,7 @@ export default class SignUp extends React.Component {
         return (
             <div>
                 <MenuBar/>
-                <div style={{paddingTop: '50px', paddingLeft: '30%', paddingRight: '30%'}}>
+                <div style={{paddingLeft: '30%', paddingRight: '30%'}}>
                     <div>
                         <Card variant='outlined'>
                             <CardContent>
@@ -68,6 +82,9 @@ export default class SignUp extends React.Component {
                                         </Grid>
                                         <Grid item xs>
                                             <Button variant='contained' color='primary' onClick={this.signup}>Sign up</Button>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <img src={Google} alt="Sign up with Google" style={{height: '40px', width: '40px'}}/>
                                         </Grid>
                                         <Grid item xs>
                                             <Link href='/login'>

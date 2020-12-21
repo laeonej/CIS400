@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { Menu } from './pages/Menu/MenuPage.js';
 import { Login } from './pages/Login/LoginPage.js';
@@ -6,17 +6,25 @@ import SignUp from './pages/Login/SignUpPage.js'
 
 import {
   BrowserRouter as Router,
+  Redirect,
   Route,
   Switch
 } from 'react-router-dom';
+import { UserContext } from "../provider/UserProvider.jsx";
+
 
 
 export default function AppRoute() {
+  const user = useContext(UserContext)
   return (
     <Router>
       <Switch>
-        <Route component={SignUp} exact path='/signup' />
-        <Route component={Login} exact path='/login' />
+        <Route exact path='/signup'>
+           {user ? <Redirect to='/'/> : <SignUp/>} 
+        </Route>
+        <Route exact path='/login'>
+          {user ? <Redirect to='/'/> : <Login/>} 
+        </Route>
         <Route component={Menu} exact path='/menu' />
         <Route component={Menu} exact path='/' />
 

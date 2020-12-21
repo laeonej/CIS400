@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { AppBar, Toolbar, Typography, Link, makeStyles, Button } from "@material-ui/core";
 import logo from '../images/logo/tablelogo.png'
+import { UserContext } from '../../provider/UserProvider'
+import { auth } from '../firebase.js'
+
 
 const useStyles = makeStyles((theme) => ({
     appbar: {
@@ -21,12 +24,16 @@ const useStyles = makeStyles((theme) => ({
     },
     title: {
         flexGrow: 1,
+    },
+    username: {
+        fontSize: 30,
+        color: '#282e3b',
     }
 }));
 
 export default function MenuBar(props) {
     const classes = useStyles();
-
+    const user = useContext(UserContext);
     return (
         <div style={{marginBottom: '50px'}}>
             <AppBar className={classes.appbar}>
@@ -37,10 +44,12 @@ export default function MenuBar(props) {
                         </Link>
                         <img src={logo}/>
                     </Typography>
-                    {props.user ? 
+                    {user !== null && user !== undefined ? 
                     <>
-                        <h2>{props.user}</h2>
-                        <Button color='inherit' onClick={props.signout}>Sign out</Button>
+                        <Typography className={classes.username}>
+                            {user.displayName}
+                        </Typography>
+                        <Button color='primary' onClick={() => {auth.signOut()}}>Sign out</Button>
                     </>
                     : 
                     <>
@@ -48,8 +57,6 @@ export default function MenuBar(props) {
                         <Link className={classes.otherLinks} href='/signup'>Sign Up</Link>
                     </>
                 }
-                    
-                    
                 </Toolbar>
             </AppBar>
         </div>
