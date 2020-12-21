@@ -3,6 +3,7 @@ import MenuBar from "../../component/MenuBar"
 import { Card, CardContent, TextField, Typography, Button, Divider, Grid, Link } from '@material-ui/core'
 import Google from '../../images/logo/google.jpg'
 import { auth, generateUserDocument } from '../../firebase.js'
+import { red } from '@material-ui/core/colors'
 
 export default class SignUp extends React.Component {
 
@@ -96,6 +97,12 @@ export default class SignUp extends React.Component {
                                         </Grid>
                                         <Grid item xs>
                                             <Button variant='contained' color='primary' onClick={this.signup}>Sign up</Button>
+                                        </Grid>
+                                        <Grid item xs>
+                                            {this.state.error ?
+                                                <span style={{color: 'red'}}>{this.state.errorMessage}</span>
+                                                : <span></span>
+                                            }
                                         </Grid>
                                         <Grid item xs>
                                             <img src={Google} alt="Sign up with Google" style={{height: '40px', width: '40px'}}/>
