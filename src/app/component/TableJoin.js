@@ -25,7 +25,7 @@ function TableJoin(props) {
             name = user.displayName
             setPlayerName(name)
         }
-    )
+        })
 
     function joinTable() {
         if (tableCode != "" && playerName != "") {
