@@ -10,9 +10,7 @@ export default class UserProvider extends Component {
 
     componentDidMount() {
         auth.onAuthStateChanged(async userAuth => {
-            console.log(userAuth)
             const user = await generateUserDocument(userAuth)
-            console.log(user)
             this.setState({ user: user })
         })
     }

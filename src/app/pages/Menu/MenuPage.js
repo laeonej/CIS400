@@ -119,7 +119,7 @@ function MainMenu(props) {
 
     if (x) {
         return (<>
-            <MenuBar setUser={props.setUser} />
+            <MenuBar/>
             <div flex-grow={1}>
                 <Grid container spacing={10} justify='center'>
                     <Grid item >

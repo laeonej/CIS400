@@ -1,58 +1,68 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import { UserContext } from '../../provider/UserProvider'
 
-class TableJoin extends Component {
-    constructor() {
-        super();
-        this.state = {
-            tableCode: "",
-            playerName: ""
-        };
-    }
+function TableJoin(props) {
+    
+    const user = useContext(UserContext)
+    var name
 
-    componentDidMount() {
-        this.props.socket.on('confirmJoinTable', data => {
+    const [tableCode, setTableCode] = useState('')
+    const [playerName, setPlayerName] = useState('')
+
+    useEffect(() => {
+        props.socket.on('confirmJoinTable', data => {
             if (data.flag) {
-                this.props.changeInfo({ "tableCode": this.state.tableCode, "playerName": this.state.playerName, "players": data.players });
+                props.changeInfo({ "tableCode": tableCode, "playerName": playerName, "players": data.players });
             } else {
                 alert("No Lobby");
             }
-        });
-    }
+        })
 
-    joinTable = () => {
-        if (this.state.tableCode != "" && this.state.playerName != "") {
-            this.props.socket.emit('joinTable', { "tableCode": this.state.tableCode, "playerName": this.state.playerName });
+        
+        if (user !== null || user !== undefined) {
+            name = user.displayName
+            setPlayerName(name)
+        }
+    })
+
+    function joinTable() {
+        if (tableCode != "" && playerName != "") {
+            this.props.socket.emit('joinTable', { "tableCode": tableCode, "playerName": playerName });
         } else {
             alert("Enter All Inputs");
         }
     }
 
-    onTableCodeChange = (e) => {
-        this.setState({ tableCode: e.target.value });
+    function onTableCodeChange(e) {
+        setTableCode(e.target.value)
     }
 
-    onPlayerNameChange = (e) => {
-        this.setState({ playerName: e.target.value });
+    function onPlayerNameChange(e) {
+        setPlayerName(e.target.value)
     }
 
-    render() {
-        return (
-            <Form>
-                <Form.Group>
-                    <Form.Label>Enter Lobby Code and Player Name</Form.Label>
+    return (
+        <Form>
+            <Form.Group>
+                <Form.Label color='#000000'>Enter Lobby Code and Player Name</Form.Label>
+                <br />
+                    <Form.Control type="text" onChange={onTableCodeChange} placeholder="Enter Table Code" />
                     <br />
-                    <Form.Control type="text" onChange={this.onTableCodeChange} placeholder="Enter Table Code" />
-                    <br />
-                    <Form.Control type="text" onChange={this.onPlayerNameChange} placeholder="Enter Player Name" />
+                    <Form.Control 
+                        type="text" 
+                        onChange={onPlayerNameChange} 
+                        placeholder="Enter Player Name" 
+                        value={playerName}
+                        disabled={name ? true : false}/>
                     <br />
                 </Form.Group>
-                <Button disabled={this.state.tableCode == "" && this.state.playerName == ""} onClick={this.joinTable} variant="primary" type="button">
+                <Button disabled={tableCode == "" && playerName == ""} onClick={joinTable} variant="primary" type="button">
                     Join
                 </Button>
             </Form>
-        );
-    }
+            );
 }
+
 
 export default TableJoin;
