@@ -29,7 +29,7 @@ function TableJoin(props) {
 
     function joinTable() {
         if (tableCode != "" && playerName != "") {
-            this.props.socket.emit('joinTable', { "tableCode": tableCode, "playerName": playerName });
+            props.socket.emit('joinTable', { "tableCode": tableCode, "playerName": playerName });
         } else {
             alert("Enter All Inputs");
         }

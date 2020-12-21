@@ -18,7 +18,7 @@ function TableCreate(props) {
 
     useEffect(() => {
         props.socket.on('confirmCreateTable', data => {
-            props.changeInfo({"playerName": playerName, "players": data.players });
+            props.changeInfo({"tableCode": data.tableCode, "playerName": playerName, "players": data.players });
         })
 
         
