@@ -13,17 +13,13 @@ export default class Card extends React.Component {
         this.state = {
             drag: false,
             backSide: true,
-            posX: 0,
-            posY: 0,
-            tempX: 0,
-            tempY: 0,
+            type: "card",
             offsetX: 300,
             offsetY: 300,
-            inPrivate: false,
-            currPlayer: null,
-            type: "card",
+            tempX: 0,
+            tempY: 0,
             inDeck: true,
-            hidden: false
+            change: true
         }
     }
 
@@ -36,12 +32,11 @@ export default class Card extends React.Component {
         }
 
         this.props.socket.emit("flipCard", {
-            inPrivate: this.state.inPrivate,
+            inPrivate: this.props.cardData[this.props.cardId].isPrivate,
             tableCode: this.props.tableCode,
             cardId: this.props.cardId,
             backSide: this.state.backSide
         })
-
         document.onmouseup = null
     }
 
@@ -62,22 +57,19 @@ export default class Card extends React.Component {
         this.props.socket.on('confirmMidDrag', data => {
             if (data.tableCode == this.props.tableCode &&
                 data.cardId == this.props.cardId) {
-                this.setState({
-                    "posX": data.posX,
-                    "posY": data.posY,
-                    "currPlayer": data.playerName
-                });
+                this.props.changeOwner(this.props.cardId, data.playerName)
+                this.props.changePos(this.props.cardId, data.posX, data.posY)
+                this.setState({ change: !this.state.change })
             }
         });
 
         this.props.socket.on('confirmStopDrag', data => {
             if (data.tableCode == this.props.tableCode &&
                 data.cardId == this.props.cardId) {
-                this.setState({
-                    "currPlayer": data.playerName,
-                    "isPrivate": data.isPrivate, "posX": data.posX,
-                    "posY": data.posY
-                });
+                this.props.changePrivate(this.props.cardId, data.isPrivate)
+                this.props.changeOwner(this.props.cardId, data.playerName)
+                this.props.changePos(this.props.cardId, data.posX, data.posY)
+                this.setState({ change: !this.state.change })
             }
         });
     }
@@ -95,22 +87,22 @@ export default class Card extends React.Component {
 
         this.setState({
             offsetX: e.clientX,
-            offsetY: e.clientY,
-            currPlayer: this.props.playerName
+            offsetY: e.clientY
         });
+
+        this.setState({ tempX: this.props.cardData[this.props.cardId].posX, tempY: this.props.cardData[this.props.cardId].posY })
+        this.props.changeOwner(this.props.cardId, this.props.playerName)
 
         if (!targ.style.left) targ.style.left = '0px';
         if (!targ.style.top) targ.style.top = '0px';
-
-        this.setState({ tempX: this.state.posX, tempY: this.state.posY })
 
 
         this.props.socket.emit('startDrag', {
             "tableCode": this.props.tableCode,
             "cardId": this.props.cardId,
             "playerName": this.props.playerName,
-            "posX": this.state.posX,
-            "posY": this.state.posY,
+            "posX": this.props.cardData[this.props.cardId].posX,
+            "posY": this.props.cardData[this.props.cardId].posY,
             "type": this.state.type
         });
 
@@ -125,16 +117,25 @@ export default class Card extends React.Component {
         if (!this.state.drag) { return };
         if (!e) { var e = window.event };
 
+        console.log("isPrivate " + this.props.cardData[this.props.cardId].isPrivate)
+
+        console.log("posX " + this.props.cardData[this.props.cardId].posX)
+
         var left = this.state.tempX + e.clientX - this.state.offsetX + 'px';
         var top = this.state.tempY + e.clientY - this.state.offsetY + 'px';
-        this.setState({ posX: parseInt(left), posY: parseInt(top) })
+
+        console.log("left " + left)
+
+        this.setState({ change: !this.state.change })
+        this.props.changePos(this.props.cardId, parseInt(left), parseInt(top))
+        //this.setState({ posX: parseInt(left), posY: parseInt(top) })
 
         this.props.socket.emit('midDrag', {
             "tableCode": this.props.tableCode,
             "cardId": this.props.cardId,
             "playerName": this.props.playerName,
-            "posX": this.state.posX,
-            "posY": this.state.posY,
+            "posX": this.props.cardData[this.props.cardId].posX,
+            "posY": this.props.cardData[this.props.cardId].posY,
             "type": this.state.type
         });
         document.onmouseup = this.stopDrag;
@@ -142,38 +143,52 @@ export default class Card extends React.Component {
     }
 
     inBounds = () => {
-        return (this.state.posX > 0 && this.state.posX + cardWidth < 500 &&
-            this.state.posY > 0 && this.state.posY + cardHeight < 400)
+        return (this.props.cardData[this.props.cardId].posX > 0 && this.props.cardData[this.props.cardId].posX + cardWidth < 500 &&
+            this.props.cardData[this.props.cardId].posY > 0 && this.props.cardData[this.props.cardId].posY + cardHeight < 400)
+    }
+
+
+    componentDidUpdate(prevProps) {
+        if (this.props.change != prevProps.change) // Check if it's a new user, you can also use some unique property, like the ID  (this.props.user.id !== prevProps.user.id)
+        {
+            console.log("IT UDATED")
+            this.setState({ change: !this.state.change })
+        }
     }
 
     stopDrag = (e) => {
-        if (!this.inBounds()) {
-            this.state.posY = this.state.posY + cardHeight > 400 ? 420 : this.state.posY < 0 ? -100 : this.state.posY;
-            this.state.posX = this.state.posX + cardWidth > 500 ? 520 : this.state.posX < 0 ? -80 : this.state.posX;
-
-            this.state.isPrivate = true;
-            console.log("this is correct\n");
-        }
-        if (this.state.isPrivate) {
-            if (this.inBounds()) {
-                this.state.isPrivate = false;
-            }
-        }
         this.setState({ drag: false })
 
-        this.props.socket.emit('stopDrag', {
-            "tableCode": this.props.tableCode,
-            "isPrivate": this.state.isPrivate,
-            "cardId": this.props.cardId,
-            "playerName": this.props.playerName,
-            "posX": this.state.posX,
-            "posY": this.state.posY,
-            "type": this.state.type
-        });
+        if (!this.inBounds()) {
+            this.props.changePos(this.props.cardId,
+                this.props.cardData[this.props.cardId].posX + cardWidth > 500 ?
+                    520 : this.props.cardData[this.props.cardId].posX < 0 ? -80 : this.props.cardData[this.props.cardId].posX,
+                this.props.cardData[this.props.cardId].posY + cardHeight > 400 ?
+                    420 : this.props.cardData[this.props.cardId].posY < 0 ? -100 : this.props.cardData[this.props.cardId].posY);
+            this.props.changePrivate(this.props.cardId, true);
 
-        if (this.state.inDeck) {
-            this.setState({ inDeck: false, hidden: true })
-            this.props.removeCard(this.props.cardId)
+            console.log("this is correct\n");
+        }
+        if (this.props.cardData[this.props.cardId].isPrivate) {
+            if (this.inBounds()) {
+                this.props.changePrivate(this.props.cardId, false);
+            }
+
+
+            this.props.socket.emit('stopDrag', {
+                "tableCode": this.props.tableCode,
+                "isPrivate": this.props.cardData[this.props.cardId].isPrivate,
+                "cardId": this.props.cardId,
+                "playerName": this.props.playerName,
+                "posX": this.props.cardData[this.props.cardId].posX,
+                "posY": this.props.cardData[this.props.cardId].posY,
+                "type": this.state.type
+            });
+
+            if (this.state.inDeck) {
+                this.setState({ inDeck: false })
+                this.props.removeCard(this.props.cardId)
+            }
         }
     }
 
@@ -187,15 +202,18 @@ export default class Card extends React.Component {
     render() {
         return (
             <Draggable
-                position={{ x: this.state.posX, y: this.state.posY }}
+                position={{
+                    x: this.props.cardData[this.props.cardId].posX, y: this.props.cardData[this.props.cardId].posY
+                }}
                 onStart={this.startDrag}
             >
-                <div id={this.props.cardId} style={{ position: this.state.inDeck ? "relative" : "absolute" }}>
+                <div id={this.props.cardId} class="card" style={{ position: this.state.inDeck ? "relative" : "absolute" }}>
                     {this.state.backSide ?
 
                         <div style={{
                             position: 'absolute',
-                            display: this.state.isPrivate & (this.state.currPlayer != this.props.playerName) ? "none" : "block"
+                            display: this.props.cardData[this.props.cardId].isPrivate &
+                                (this.props.cardData[this.props.cardId].owner != this.props.playerName) ? "none" : "block"
                         }}>
                             <img src={cardback} alt='card' height={cardHeight} width={cardWidth} />
                         </div>
@@ -203,12 +221,11 @@ export default class Card extends React.Component {
                         :
                         <div style={{
                             position: 'absolute',
-                            display: this.state.isPrivate & (this.state.currPlayer != this.props.playerName) ? "none" : "block"
+                            display: this.props.cardData[this.props.cardId].isPrivate &
+                                (this.props.cardData[this.props.cardId].owner != this.props.playerName) ? "none" : "block"
                         }}>
                             <img src={this.props.frontSide} alt='card' height={cardHeight} width={cardWidth} />
                         </div>
-
-
                     }
 
                 </div>
