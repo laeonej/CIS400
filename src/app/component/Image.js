@@ -24,23 +24,32 @@ export default class Image extends React.Component {
 
     componentDidMount() {
         this.props.socket.on('confirmStartDrag', data => {
-            if (data.cardId == this.props.cardId && data.flag) {
+            console.log("this is working")
+            if (data.src == this.props.src && data.flag) {
                 this.setState({ "drag": true });
             }
         });
         this.props.socket.on('confirmMidDrag', data => {
-            if (data.tableCode == this.props.tableCode && data.src == this.props.src) {
-                this.setState({ "posX": data.posX, "posY": data.posY, "currPlayer": data.playerName });
+            console.log(data.src)
+            console.log(this.props.src)
+            if (data.tableCode == this.props.tableCode &&
+                data.src == this.props.src) {
+                this.setState({
+                    "posX": data.posX,
+                    "posY": data.posY,
+                    "currPlayer": data.playerName
+                });
             }
         });
         this.props.socket.on('confirmStopDrag', data => {
-            if (data.tableCode == this.props.tableCode && data.src == this.props.src) {
-                this.setState({ "currPlayer": data.playerName, "isPrivate": data.isPrivate, "posX": data.posX, "posY": data.posY });
-            }
-        });
-        this.props.socket.on('confirmAddImage', data => {
-            if (data.tableCode == this.props.tableCode && data.src == this.props.src) {
-                this.setState({ "currPlayer": data.playerName, "isPrivate": data.isPrivate, "posX": data.posX, "posY": data.posY });
+            if (data.tableCode == this.props.tableCode &&
+                data.src == this.props.src) {
+                this.setState({
+                    "currPlayer": data.playerName,
+                    "isPrivate": data.isPrivate,
+                    "posX": data.posX,
+                    "posY": data.posY
+                });
             }
         });
     }
@@ -56,20 +65,27 @@ export default class Image extends React.Component {
         // IE uses srcElement, others use target
         var targ = e.target ? e.target : e.srcElement;
 
-        this.setState({ offsetX: e.clientX, offsetY: e.clientY, currPlayer: this.props.playerName });
+        this.setState({
+            offsetX: e.clientX,
+            offsetY: e.clientY,
+            currPlayer: this.props.playerName
+        });
 
-        if (!targ.style.left) { targ.style.left = '0px' };
-        if (!targ.style.top) { targ.style.top = '0px' };
+        if (!targ.style.left) targ.style.left = '0px';
+        if (!targ.style.top) targ.style.top = '0px';
 
         this.setState({ tempX: this.state.posX, tempY: this.state.posY })
 
-
-        this.props.socket.emit('startDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY });
-
+        this.props.socket.emit('startDrag', {
+            tableCode: this.props.tableCode,
+            src: this.props.src,
+            playerName: this.props.playerName,
+            posX: this.state.posX,
+            posY: this.state.posY,
+            type: this.state.type
+        });
         document.onmousemove = this.dragDiv;
-
         return false;
-
     }
 
     dragDiv = (e) => {
@@ -81,7 +97,12 @@ export default class Image extends React.Component {
         this.setState({ posX: parseInt(left), posY: parseInt(top) })
 
         this.props.socket.emit('midDrag', {
-            "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY
+            "tableCode": this.props.tableCode,
+            "src": this.props.src,
+            "playerName": this.props.playerName,
+            "posX": this.state.posX,
+            "posY": this.state.posY,
+            "type": this.state.type
         });
         document.onmouseup = this.stopDrag;
         return false;
@@ -94,8 +115,10 @@ export default class Image extends React.Component {
 
     stopDrag = (e) => {
         if (!this.inBounds()) {
-            this.state.posY = this.state.posY + cardHeight > 400 ? 420 : this.state.posY < 0 ? -100 : this.state.posY;
-            this.state.posX = this.state.posX + cardWidth > 500 ? 520 : this.state.posX < 0 ? -80 : this.state.posX;
+            this.state.posY = this.state.posY + cardHeight > 400 ? 420 :
+                this.state.posY < 0 ? -100 : this.state.posY;
+            this.state.posX = this.state.posX + cardWidth > 500 ? 520 :
+                this.state.posX < 0 ? -80 : this.state.posX;
 
             this.state.isPrivate = true;
             console.log("this is correct\n");
@@ -107,8 +130,15 @@ export default class Image extends React.Component {
         }
         this.setState({ drag: false })
 
-
-        this.props.socket.emit('stopDrag', { "tableCode": this.props.tableCode, "isPrivate": this.state.isPrivate, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY });
+        this.props.socket.emit('stopDrag', {
+            "tableCode": this.props.tableCode,
+            "isPrivate": this.state.isPrivate,
+            "src": this.props.src,
+            "playerName": this.props.playerName,
+            "posX": this.state.posX,
+            "posY": this.state.posY,
+            "type": this.state.type
+        });
     }
 
     render() {
@@ -121,8 +151,11 @@ export default class Image extends React.Component {
                         }}
                         onStart={this.startDrag}
                     >
-                        <div style={{ position: 'absolute', display: this.state.isPrivate & (this.state.currPlayer != this.props.playerName) ? "none" : "block" }}>
-                            <img src={this.props.frontSide} alt='card' height={cardHeight} width={cardWidth} />
+                        <div style={{
+                            position: 'absolute',
+                            display: this.state.isPrivate & (this.state.currPlayer != this.props.playerName) ? "none" : "block"
+                        }}>
+                            <img src={this.props.src} alt='card' height={cardHeight} width={cardWidth} />
                         </div>
                     </Draggable>
                 }

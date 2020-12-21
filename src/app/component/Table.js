@@ -14,18 +14,39 @@ class Table extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.props.socket.on('confirmAddImage', data => {
+            if (data.tableCode == this.props.tableCode) {
+                const newImage = <Image src={data.src}
+                    tableCode={data.tableCode}
+                    socket={this.props.socket} />
+                this.state.images.push(newImage)
+                this.setState({ images: this.state.images })
+            }
+        });
+    }
+
     exitTable = () => {
-        this.props.socket.emit("exitTable", { "tableCode": this.props.tableCode, "playerName": this.props.playerName })
+        this.props.socket.emit("exitTable", {
+            "tableCode": this.props.tableCode,
+            "playerName": this.props.playerName
+        })
         this.props.changeInfo({ "tableCode": null, "playerName": null });
     }
 
     handleFile(file) {
         //you can carry out any file validations here...
         const url = URL.createObjectURL(file)
-        const newImage = <Image frontSide={url} tableCode={this.props.tableCode} socket={this.props.socket} playerName={this.props.playerName} />
+        const newImage = <Image
+            src={url}
+            tableCode={this.props.tableCode}
+            socket={this.props.socket} />
         this.state.images.push(newImage)
         this.setState({ images: this.state.images })
-        this.props.socket.emit("addImage", { src: url, tableCode: this.props.tableCode })
+        this.props.socket.emit("addImage", {
+            src: url,
+            tableCode: this.props.tableCode
+        })
 
         //this.setState({ images: , previewUrl: URL.createObjectURL(file) })
         //console.log(this.state.previewUrl)

@@ -87,7 +87,10 @@ io.on('connection', client => {
                         50: { playerName: null, posX: 0, posY: 0, backSide: true },
                         51: { playerName: null, posX: 0, posY: 0, backSide: true }
                     },
-                    images: []
+                    images: {},
+                    decks: {
+                        0: { playerName: null, posX: 0, posY: 0 }
+                    }
                 }
                 flag = true;
             }
@@ -104,62 +107,161 @@ io.on('connection', client => {
                 tableCode: data.tableCode,
                 playerName: data.playerName
             };
-            //add player to table
+            // add player to table
             table[data.tableCode].players.push(data.playerName)
-            client.broadcast.emit("confirmNewPlayer", { tableCode: data.tableCode, players: table[data.tableCode].players });
+            client.broadcast.emit("confirmNewPlayer", {
+                tableCode: data.tableCode,
+                players: table[data.tableCode].players
+            });
         } else {
             flag = false;
         }
-        client.emit("confirmJoinTable", { flag: flag, players: table[data.tableCode] ? table[data.tableCode].players : null });
+        client.emit("confirmJoinTable", {
+            flag: flag,
+            players: table[data.tableCode] ? table[data.tableCode].players : null
+        });
     });
 
     client.on('startDrag', data => {
         var flag = true;
+        var id = null;
 
         // another player has already start dragging this card
         if (table[data.tableCode]) {
-            if (table[data.tableCode].cards[data.cardId].playerName != null) {
-                flag = false;
-                console.log("this is checking it\n");
-            } else {
-                table[data.tableCode].cards[data.cardId] = { playerName: data.playerName, posX: data.posX, posY: data.posY }
+
+            newData = {
+                playerName: data.playerName,
+                posX: data.posX,
+                posY: data.posY
+            }
+            if (data.type == "card") {
+                if (table[data.tableCode].cards[data.cardId].playerName != null) {
+                    flag = false;
+                } else {
+                    table[data.tableCode].cards[data.cardId] = newData
+                }
+                client.emit("confirmStartDrag", {
+                    cardId: data.cardId,
+                    flag: flag
+                });
+            } else if (data.type == "image") {
+                if (table[data.tableCode].images[data.src].playerName != null) {
+                    flag = false;
+                } else {
+                    table[data.tableCode].images[data.src] = newData
+
+                }
+                client.emit("confirmStartDrag", {
+                    src: data.src,
+                    flag: flag
+                });
+            } else if (data.type = "deck") {
+                if (table[data.tableCode].decks[data.deckId].playerName != null) {
+                    flag = false;
+                } else {
+                    table[data.tableCode].images[data.deckId] = newData
+                }
+                client.emit("confirmStartDrag", {
+                    deckId: data.deckId,
+                    flag: flag
+                });
+
             }
         }
-
-        client.emit("confirmStartDrag", { cardId: data.cardId, flag: flag });
     })
 
     client.on('midDrag', data => {
-        table[data.tableCode].cards[data.cardId].posX = data.posX;
-        table[data.tableCode].cards[data.cardId].posY = data.posY;
+        returnData = {
+            type: data.type,
+            playerName: data.playerName,
+            tableCode: data.tableCode,
+            posX: data.posX,
+            posY: data.posY
+        }
 
-        client.broadcast.emit("confirmMidDrag", { playerName: data.playerName, tableCode: data.tableCode, cardId: data.cardId, posX: data.posX, posY: data.posY });
+        if (data.type == "card") {
+            table[data.tableCode].cards[data.cardId].posX = data.posX;
+            table[data.tableCode].cards[data.cardId].posY = data.posY;
+            returnData["cardId"] = data.cardId;
+        } else if (data.type == "image") {
+            table[data.tableCode].images[data.src].posX = data.posX;
+            table[data.tableCode].images[data.src].posY = data.posY;
+            returnData["src"] = data.src;
+        } else if (data.type == "deck") {
+            table[data.tableCode].decks[data.deckId].posX = data.posX;
+            table[data.tableCode].decks[data.deckId].posY = data.posY;
+            returnData["deckId"] = data.deckId;
+        }
+        client.broadcast.emit("confirmMidDrag", returnData);
     })
 
     client.on('stopDrag', data => {
+        returnData = {
+            type: data.type,
+            playerName: data.playerName,
+            isPrivate: data.isPrivate,
+            tableCode: data.tableCode,
+            posX: data.posX,
+            posY: data.posY
+        }
 
-        table[data.tableCode].cards[data.cardId] = { playerName: null, posX: data.posX, posY: data.posY };
-        client.broadcast.emit("confirmStopDrag", { playerName: data.playerName, isPrivate: data.isPrivate, tableCode: data.tableCode, cardId: data.cardId, posX: data.posX, posY: data.posY });
-
+        if (data.type == "card") {
+            table[data.tableCode].cards[data.cardId] = {
+                playerName: null,
+                posX: data.posX,
+                posY: data.posY
+            };
+            returnData["cardId"] = data.cardId;
+        } else if (data.type == "image") {
+            table[data.tableCode].images[data.src] = {
+                playerName: null,
+                posX: data.posX,
+                posY: data.posY
+            };
+            returnData["src"] = data.src;
+        } else if (data.type == "deck") {
+            table[data.tableCode].decks[data.deckId] = {
+                playerName: null,
+                posX: data.posX,
+                posY: data.posY
+            };
+            returnData["deckId"] = data.deckId;
+        }
+        client.broadcast.emit("confirmStopDrag", returnData);
     })
 
     client.on("flipCard", data => {
         table[data.tableCode].cards[data.cardId].backSide = data.backSide
         table[data.tableCode].cards[data.cardId].playerName = null
 
-        client.broadcast.emit("confirmFlipCard", { tableCode: data.tableCode, cardId: data.cardId, backSide: data.backSide });
+        client.broadcast.emit("confirmFlipCard", {
+            tableCode: data.tableCode,
+            cardId: data.cardId,
+            backSide: data.backSide
+        });
     })
 
     client.on("exitTable", data => {
         const i = table[data.tableCode].players.indexOf(data.playerName);
         table[data.tableCode].players.splice(i, 1);
 
-        client.broadcast.emit("confirmNewPlayer", { tableCode: data.tableCode, players: table[data.tableCode].players });
+        client.broadcast.emit("confirmNewPlayer", {
+            tableCode: data.tableCode,
+            players: table[data.tableCode].players
+        });
     })
 
     client.on("addImage", data => {
-        table[data.tableCode].images.push(data.src)
-        client.broadcast.emit("confirmAddImage", { tableCode: data.tableCode, src: data.src });
+        table[data.tableCode].images[data.src] = {
+            playerName: data.playerName,
+            posX: data.posX,
+            posY: data.posY
+        }
+        console.log(data.src)
+        client.broadcast.emit("confirmAddImage", {
+            tableCode: data.tableCode,
+            src: data.src
+        });
     })
 
     // STEP 6 ::=> It is a event which will handle user registration process
