@@ -90,7 +90,8 @@ io.on('connection', client => {
                     images: {},
                     decks: {
                         0: { playerName: null, posX: 0, posY: 0 }
-                    }
+                    },
+                    inDeck: new Array(52).fill(true)
                 }
                 flag = true;
             }
@@ -261,6 +262,16 @@ io.on('connection', client => {
         client.broadcast.emit("confirmAddImage", {
             tableCode: data.tableCode,
             src: data.src
+        });
+    })
+
+    client.on("dealCard", data => {
+        table[data.tableCode].inDeck[data.cardId] = data.inDeck
+
+        client.broadcast.emit("confirmDealCard", {
+            tableCode: data.tableCode,
+            cardId: data.cardId,
+            inDeck: data.inDeck
         });
     })
 

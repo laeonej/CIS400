@@ -8,6 +8,7 @@ import TableJoin from '../../component/TableJoin';
 import io from "socket.io-client";
 
 
+
 export class Menu extends React.Component {
     constructor(props) {
         super(props)
@@ -75,6 +76,12 @@ export class Menu extends React.Component {
         this.setState({ joinPage: true })
     }
 
+    // setUser(user) {
+    //     if (user != null) {
+    //         this.setState({ playerName: user.displayName });
+    //     }
+    // }
+
     render() {
         return (
             <div>
@@ -112,7 +119,7 @@ function MainMenu(props) {
 
     if (x) {
         return (<>
-            <MenuBar/>
+            <MenuBar setUser={props.setUser} />
             <div flex-grow={1}>
                 <Grid container spacing={10} justify='center'>
                     <Grid item >

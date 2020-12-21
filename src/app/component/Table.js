@@ -4,17 +4,23 @@ import Card from './Card';
 import cardFront from '../images/cardFronts/cardFront.js'
 import { Button } from 'react-bootstrap';
 import Image from './Image'
+import ReactDOM from 'react-dom';
 
 class Table extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             images: [],
-            previewUrls: []
+            previewUrls: [],
+            tableLeft: 0,
+            tableTop: 0
         }
     }
 
     componentDidMount() {
+        var rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+        this.setState({ tableLeft: rect.left, tableTop: rect.top });
+
         this.props.socket.on('confirmAddImage', data => {
             if (data.tableCode == this.props.tableCode) {
                 const newImage = <Image src={data.src}
@@ -67,12 +73,12 @@ class Table extends React.Component {
 
     render() {
         return (
-            <div className="wrapper" onDragOver={this.handleDragOver} onDrop={this.handleDrop}>
+            <div id="table " className="wrapper" onDragOver={this.handleDragOver} onDrop={this.handleDrop}>
                 <div style={{
                     backgroundColor: 'green', height: 400, width: 500,
                     borderStyle: 'solid', borderWidth: 2, borderColor: 'black'
                 }}>
-                    <Deck tableCode={this.props.tableCode} socket={this.props.socket} playerName={this.props.playerName} />
+                    <Deck tableTop={this.state.tableTop} tableLeft={this.state.tableLeft} tableCode={this.props.tableCode} socket={this.props.socket} playerName={this.props.playerName} />
 
                     {this.state.previewUrl && <div className="image">
                         <img src={this.state.previewUrl} alt='image' />

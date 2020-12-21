@@ -1,8 +1,8 @@
 import React from 'react'
 import Draggable from 'react-draggable';
 
-var cardHeight = 240;
-var cardWidth = 360;
+var cardHeight = 100;
+var cardWidth = 100;
 
 export default class Image extends React.Component {
     constructor(props) {
@@ -108,26 +108,27 @@ export default class Image extends React.Component {
         return false;
     }
 
-    inBounds = () => {
-        return (this.state.posX > 0 && this.state.posX + cardWidth < 500 &&
-            this.state.posY > 0 && this.state.posY + cardHeight < 400)
-    }
+    // inBounds = () => {
+    //     return (this.state.posX > -160 && this.state.posX + cardWidth < 250 &&
+    //         this.state.posY > -160 && this.state.posY + cardHeight < 200)
+
+    // }
 
     stopDrag = (e) => {
-        if (!this.inBounds()) {
-            this.state.posY = this.state.posY + cardHeight > 400 ? 420 :
-                this.state.posY < 0 ? -100 : this.state.posY;
-            this.state.posX = this.state.posX + cardWidth > 500 ? 520 :
-                this.state.posX < 0 ? -80 : this.state.posX;
 
-            this.state.isPrivate = true;
-            console.log("this is correct\n");
-        }
-        if (this.state.isPrivate) {
-            if (this.inBounds()) {
-                this.state.isPrivate = false;
-            }
-        }
+        // if (!this.inBounds()) {
+        //     this.state.posY = this.state.posY + cardHeight > 255 ? 170 :
+        //         this.state.posY < -255 ? -185 : this.state.posY;
+        //     this.state.posX = this.state.posX + cardWidth > 200 ? 120 :
+        //         this.state.posX < -160 ? -90 : this.state.posX;
+
+        //     this.state.isPrivate = true;
+        // }
+        // if (this.state.isPrivate) {
+        //     if (this.inBounds()) {
+        //         this.state.isPrivate = false;
+        //     }
+        // }
         this.setState({ drag: false })
 
         this.props.socket.emit('stopDrag', {

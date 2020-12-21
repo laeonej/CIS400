@@ -10,17 +10,24 @@ class Deck extends React.Component {
         super(props);
 
         let data = []
+        console.log(this.props.tableLeft)
+        console.log(this.props.tableTop)
         for (var i = 0; i < 52; i++) {
-            data.push({ isPrivate: false, owner: null, posX: 0, posY: 0, offsetX: 0, offsetY: 0 });
+            data.push({
+                isPrivate: false,
+                owner: null,
+                posX: 0,
+                posY: 0,
+                inDeck: true
+            });
         }
-
         this.state = {
             cards: [],
             orphanCards: [],
-            posX: 0,
-            posY: 0,
-            offsetX: 300,
-            offsetY: 300,
+            posX: 325,
+            posY: 325,
+            offsetX: 0,
+            offsetY: 0,
             drag: false,
             type: "deck",
             deckId: 0,
@@ -31,6 +38,7 @@ class Deck extends React.Component {
 
     componentDidMount() {
         console.log(this.state.cardData)
+
         this.props.socket.on('confirmMidDrag', data => {
             if (data.type == "deck") {
                 if (data.tableCode == this.props.tableCode &&
@@ -58,6 +66,13 @@ class Deck extends React.Component {
                 }
             }
         });
+
+        this.props.socket.on('confirmDealCard', data => {
+            if (data.tableCode == this.props.tableCode) {
+                this.state.cardData[data.cardId].inDeck = data.inDeck
+                this.setState({ cardData: this.state.cardData })
+            }
+        });
     }
 
     changePrivate(id, privateVal) {
@@ -76,6 +91,20 @@ class Deck extends React.Component {
         this.setState({ cardData: this.state.cardData });
     }
 
+    changeDeck(id, inDeck) {
+        this.state.cardData[id].inDeck = inDeck;
+        this.setState({ cardData: this.state.cardData })
+
+        this.props.socket.emit('dealCard', {
+            "tableCode": this.props.tableCode,
+            "deckId": this.state.deckId,
+            "playerName": this.props.playerName,
+            "inDeck": inDeck,
+            "cardId": id,
+            "type": this.state.type
+        });
+    }
+
     componentWillMount() {
         this.props.socket.on('confirmStartDrag', data => {
             if (data.deckId == this.state.deckId && data.flag) {
@@ -83,31 +112,31 @@ class Deck extends React.Component {
             }
         });
 
-        let cardDiv = cardFront.map(({ id, src }) =>
-            <Card
-                removeCard={this.removeCard.bind(this)}
-                posX={0}
-                posY={0}
-                cardData={this.state.cardData}
-                changePrivate={this.changePrivate.bind(this)}
-                changeOwner={this.changeOwner.bind(this)}
-                changePos={this.changePos.bind(this)}
-                // parentX={this.state.posX}
-                // parentY={this.state.posY}
-                // parentOffX={this.state.offsetX}
-                // parentOffY={this.state.offsetY}
+        // let cardDiv = cardFront.map(({ id, src }) =>
+        //     <Card
+        //         removeCard={this.removeCard.bind(this)}
+        //         posX={200}
+        //         posY={300}
+        //         cardData={this.state.cardData}
+        //         changePrivate={this.changePrivate.bind(this)}
+        //         changeOwner={this.changeOwner.bind(this)}
+        //         changePos={this.changePos.bind(this)}
+        //         // parentX={this.state.posX}
+        //         // parentY={this.state.posY}
+        //         // parentOffX={this.state.offsetX}
+        //         // parentOffY={this.state.offsetY}
 
-                change={this.state.change}
-                frontSide={src}
-                tableCode={this.props.tableCode}
-                cardId={id}
-                socket={this.props.socket}
-                playerName={this.props.playerName} />
-        );
+        //         change={this.state.change}
+        //         frontSide={src}
+        //         tableCode={this.props.tableCode}
+        //         cardId={id}
+        //         socket={this.props.socket}
+        //         playerName={this.props.playerName} />
+        // );
 
-        this.setState({
-            cards: cardDiv
-        })
+        // this.setState({
+        //     cards: cardDiv
+        // })
     }
 
     startDrag = (e) => {
@@ -180,19 +209,6 @@ class Deck extends React.Component {
     // }
 
     stopDrag = (e) => {
-        // if (!this.inBounds()) {
-        //     this.state.posY = this.state.posY + cardHeight > 400 ? 420 : this.state.posY < 0 ? -100 : this.state.posY;
-        //     this.state.posX = this.state.posX + cardWidth > 500 ? 520 : this.state.posX < 0 ? -80 : this.state.posX;
-
-        //     this.state.isPrivate = true;
-
-        // }
-        // if (this.state.isPrivate) {
-        //     if (this.inBounds()) {
-        //         this.state.isPrivate = false;
-        //     }
-        // }
-
 
         this.setState({ drag: false })
 
@@ -208,9 +224,20 @@ class Deck extends React.Component {
     }
 
     removeCard(removeId) {
-        var toRemove = document.getElementById(removeId);
-        document.getElementById("deck").removeChild(toRemove);
-        document.getElementById("orphan-container").appendChild(toRemove);
+        // var toRemove = document.getElementById(removeId);
+        // document.getElementById("deck").removeChild(toRemove);
+        // document.getElementById("orphan-container").appendChild(toRemove);
+
+
+
+        // console.log(this.state.cardData[removeId].posX)
+        // console.log(this.state.posX)
+        // this.state.cardData[removeId].posX = this.state.cardData[removeId].posX + this.state.posX;
+        // this.state.cardData[removeId].posY = this.state.cardData[removeId].posY + this.state.posY;
+        // this.setState({ cardData: this.state.cardData });
+
+
+
 
         // var findElement = this.state.cards.find(element => element.props.cardId === removeId);
         // const index = this.state.cards.indexOf(findElement)
@@ -231,13 +258,35 @@ class Deck extends React.Component {
     // }
 
     dealCard() {
-        this.state.cardData[51].isPrivate = true;
-        this.state.cardData[51].posY = 450;
-        this.state.cardData[51].owner = this.props.playerName;
-        this.setState({ change: !this.state.change, cardData: this.state.cardData })
-        console.log(this.state.change)
+        let randIdx = 51;
+        var flag = false;
+        for (var i = 0; i < 52; i++) {
+            if (this.state.cardData[i]) {
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) return;
+        while (!this.state.cardData[randIdx].inDeck) {
+            randIdx = Math.floor(Math.random() * 52);
+        }
+        this.state.cardData[randIdx].inDeck = false;
+        this.state.cardData[randIdx].isPrivate = true;
+        this.state.cardData[randIdx].posY = 260;
+        this.state.cardData[randIdx].owner = this.props.playerName;
+        this.setState({
+            cardData: this.state.cardData
+        })
+
+        this.props.socket.emit('dealCard', {
+            "tableCode": this.props.tableCode,
+            "deckId": this.state.deckId,
+            "playerName": this.props.playerName,
+            "inDeck": false,
+            "cardId": randIdx,
+            "type": this.state.type
+        });
         // var currCards = document.getElementById("deck").getElementsByClassName("card");
-        // let randIdx = Math.floor(Math.random() * 52);
 
         // var dealtCard = currCards[randIdx];
     }
@@ -249,7 +298,7 @@ class Deck extends React.Component {
                     Deal Cards
                 </Button>
                 <div id="deck" style={{
-                    position: "relative",
+                    position: "absolute",
                     top: this.state.posY, left: this.state.posX
                 }}>
                     <Draggable
@@ -260,23 +309,19 @@ class Deck extends React.Component {
                     {cardFront.map(({ id, src }) =>
                         <Card
                             removeCard={this.removeCard.bind(this)}
-                            posX={0}
-                            posY={0}
                             cardData={this.state.cardData}
                             changePrivate={this.changePrivate.bind(this)}
                             changeOwner={this.changeOwner.bind(this)}
                             changePos={this.changePos.bind(this)}
-                            // parentX={this.state.posX}
-                            // parentY={this.state.posY}
-                            // parentOffX={this.state.offsetX}
-                            // parentOffY={this.state.offsetY}
-
+                            changeDeck={this.changeDeck.bind(this)}
                             change={this.state.change}
                             frontSide={src}
                             tableCode={this.props.tableCode}
                             cardId={id}
                             socket={this.props.socket}
-                            playerName={this.props.playerName} />)
+                            playerName={this.props.playerName}
+                            parentX={this.state.posX}
+                            parentY={this.state.posY} />)
                     }
                 </div>
                 <div id="orphan-container">

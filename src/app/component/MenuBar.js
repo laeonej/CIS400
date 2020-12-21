@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
     },
     titleLink: {
         fontSize: 36,
-        color:'#535559',
+        color: '#535559',
     },
     otherLinks: {
         fontSize: 20,
@@ -34,29 +34,30 @@ const useStyles = makeStyles((theme) => ({
 export default function MenuBar(props) {
     const classes = useStyles();
     const user = useContext(UserContext);
+
     return (
-        <div style={{marginBottom: '50px'}}>
+        <div style={{ marginBottom: '50px' }}>
             <AppBar className={classes.appbar}>
                 <Toolbar>
                     <Typography className={classes.title}>
                         <Link className={classes.titleLink} underline='none' href='/'>
                             table
                         </Link>
-                        <img src={logo}/>
+                        <img src={logo} />
                     </Typography>
-                    {user !== null && user !== undefined ? 
-                    <>
-                        <Typography className={classes.username}>
-                            {user.displayName}
-                        </Typography>
-                        <Button color='primary' onClick={() => {auth.signOut()}}>Sign out</Button>
-                    </>
-                    : 
-                    <>
-                        <Link className={classes.otherLinks} href='/login'>Login</Link>
-                        <Link className={classes.otherLinks} href='/signup'>Sign Up</Link>
-                    </>
-                }
+                    {user !== null && user !== undefined ?
+                        <>
+                            <Typography className={classes.username}>
+                                {user.displayName}
+                            </Typography>
+                            <Button color='primary' onClick={() => { auth.signOut() }}>Sign out</Button>
+                        </>
+                        :
+                        <>
+                            <Link className={classes.otherLinks} href='/login'>Login</Link>
+                            <Link className={classes.otherLinks} href='/signup'>Sign Up</Link>
+                        </>
+                    }
                 </Toolbar>
             </AppBar>
         </div>

@@ -14,11 +14,10 @@ export default class Card extends React.Component {
             drag: false,
             backSide: true,
             type: "card",
-            offsetX: 300,
+            offsetX: 200,
             offsetY: 300,
             tempX: 0,
             tempY: 0,
-            inDeck: true,
             change: true
         }
     }
@@ -41,6 +40,14 @@ export default class Card extends React.Component {
     }
 
     componentDidMount() {
+
+        // this.props.socket.on('confirmDealCard', data => {
+        //     if (data.tableCode == this.props.tableCode) {
+        //         this.props.changeDeck(this.props.cardId, data.inDeck)
+        //     }
+        // });
+
+
         this.props.socket.on('confirmFlipCard', data => {
             if (data.tableCode == this.props.tableCode &&
                 data.cardId == this.props.cardId) {
@@ -119,7 +126,7 @@ export default class Card extends React.Component {
 
         console.log("isPrivate " + this.props.cardData[this.props.cardId].isPrivate)
 
-        console.log("posX " + this.props.cardData[this.props.cardId].posX)
+        console.log("posY " + this.props.cardData[this.props.cardId].posY)
 
         var left = this.state.tempX + e.clientX - this.state.offsetX + 'px';
         var top = this.state.tempY + e.clientY - this.state.offsetY + 'px';
@@ -143,15 +150,15 @@ export default class Card extends React.Component {
     }
 
     inBounds = () => {
-        return (this.props.cardData[this.props.cardId].posX > 0 && this.props.cardData[this.props.cardId].posX + cardWidth < 500 &&
-            this.props.cardData[this.props.cardId].posY > 0 && this.props.cardData[this.props.cardId].posY + cardHeight < 400)
+        return (this.props.cardData[this.props.cardId].posX > -160 && this.props.cardData[this.props.cardId].posX + cardWidth < 270 &&
+            this.props.cardData[this.props.cardId].posY > -160 && this.props.cardData[this.props.cardId].posY + cardHeight < 230)
+
     }
 
 
     componentDidUpdate(prevProps) {
         if (this.props.change != prevProps.change) // Check if it's a new user, you can also use some unique property, like the ID  (this.props.user.id !== prevProps.user.id)
         {
-            console.log("IT UDATED")
             this.setState({ change: !this.state.change })
         }
     }
@@ -161,13 +168,12 @@ export default class Card extends React.Component {
 
         if (!this.inBounds()) {
             this.props.changePos(this.props.cardId,
-                this.props.cardData[this.props.cardId].posX + cardWidth > 500 ?
-                    520 : this.props.cardData[this.props.cardId].posX < 0 ? -80 : this.props.cardData[this.props.cardId].posX,
-                this.props.cardData[this.props.cardId].posY + cardHeight > 400 ?
-                    420 : this.props.cardData[this.props.cardId].posY < 0 ? -100 : this.props.cardData[this.props.cardId].posY);
+                this.props.cardData[this.props.cardId].posX + cardWidth > 270 ?
+                    295 : this.props.cardData[this.props.cardId].posX < -255 ? -315 : this.props.cardData[this.props.cardId].posX,
+                this.props.cardData[this.props.cardId].posY + cardHeight > 230 ?
+                    260 : this.props.cardData[this.props.cardId].posY < -160 ? -260 : this.props.cardData[this.props.cardId].posY);
             this.props.changePrivate(this.props.cardId, true);
 
-            console.log("this is correct\n");
         }
         if (this.props.cardData[this.props.cardId].isPrivate) {
             if (this.inBounds()) {
@@ -185,10 +191,11 @@ export default class Card extends React.Component {
                 "type": this.state.type
             });
 
-            if (this.state.inDeck) {
-                this.setState({ inDeck: false })
-                this.props.removeCard(this.props.cardId)
-            }
+
+        }
+        if (this.props.cardData[this.props.cardId].inDeck) {
+            this.props.changeDeck(this.props.cardId, false);
+            //this.props.removeCard(this.props.cardId)
         }
     }
 
@@ -207,7 +214,7 @@ export default class Card extends React.Component {
                 }}
                 onStart={this.startDrag}
             >
-                <div id={this.props.cardId} class="card" style={{ position: this.state.inDeck ? "relative" : "absolute" }}>
+                <div id={this.props.cardId} class="card" style={{ position: "relative" }}>
                     {this.state.backSide ?
 
                         <div style={{
