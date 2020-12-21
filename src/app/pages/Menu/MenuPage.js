@@ -1,6 +1,6 @@
 import React from "react";
 import Buttons from '../../component/Button';
-import AppAppBar from '../../component/AppAppbar';
+import MenuBar from '../../component/MenuBar';
 import Table from '../../component/Table';
 import { Grid } from '@material-ui/core'
 import TableCreate from '../../component/TableCreate';
@@ -112,7 +112,7 @@ function MainMenu(props) {
 
     if (x) {
         return (<>
-            <AppAppBar />
+            <MenuBar />
             <div flex-grow={1}>
                 <Grid container spacing={10} justify='center'>
                     <Grid item >
