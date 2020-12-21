@@ -1,44 +1,55 @@
-import React from "react"
+import React from 'react'
 import MenuBar from "../../component/MenuBar"
 import { Card, CardContent, TextField, Typography, Button, Divider, Grid, Link } from '@material-ui/core'
 
-
-export class Login extends React.Component {
+export default class SignUp extends React.Component {
 
     constructor(props) {
         super(props)
-        this.login = this.login.bind(this)
+        this.signup = this.signup.bind(this)
         this.emailInput = this.emailInput.bind(this)
+        this.usernameInput = this.usernameInput.bind(this)
         this.passwordInput = this.passwordInput.bind(this)
+        this.passwordConfInput = this.passwordConfInput.bind(this)
         this.state = {
             email : '',
-            password: ''
+            username: '',
+            password: '',
+            confirm: ''
         }
     }
 
     async emailInput(event) {
-        await this.setState({email : event.target.value})
+        await this.setState({email: event.target.value})
+    }
+
+    async usernameInput(event) {
+        await this.setState({username: event.target.value})
     }
 
     async passwordInput(event) {
-        await this.setState({password : event.target.value})    
+        await this.setState({password: event.target.value})
     }
 
-
-    login() {
-        //firebase stuff goes here
+    async passwordConfInput(event) {
+        await this.setState({confirm: event.target.value})
     }
+
+    signup() {
+
+    }
+
 
     render() {
         return (
             <div>
                 <MenuBar/>
-                <div style={{paddingLeft: '30%', paddingRight: '30%'}}>
+                <div style={{paddingTop: '50px', paddingLeft: '30%', paddingRight: '30%'}}>
                     <div>
                         <Card variant='outlined'>
                             <CardContent>
                                 <Typography variant='h4' align='center' style={{marginBottom: '5px'}}>
-                                    Login
+                                    Sign Up
                                 </Typography>
                                 <Divider/>
                                 <form style={{marginTop: '10px'}}>
@@ -47,14 +58,20 @@ export class Login extends React.Component {
                                             <TextField required id='email' label='Email' type='email' onChange={this.emailInput}/>
                                         </Grid>
                                         <Grid item xs>
+                                            <TextField required id='username' label='Username' type='text' onChange={this.usernameInput}/>
+                                        </Grid>
+                                        <Grid item xs>
                                             <TextField required id='password' label='Password' type='password' onChange={this.passwordInput}/>
                                         </Grid>
                                         <Grid item xs>
-                                            <Button variant='contained' color='primary' onClick={this.login}>Login</Button>
+                                            <TextField required id='passwordConfirm' label='Confirm Password' type='password' onChange={this.passwordConfInput}/>
                                         </Grid>
                                         <Grid item xs>
-                                            <Link href='/signup'>
-                                                Don't have an account?
+                                            <Button variant='contained' color='primary' onClick={this.signup}>Sign up</Button>
+                                        </Grid>
+                                        <Grid item xs>
+                                            <Link href='/login'>
+                                                Already have an account?
                                             </Link>
                                         </Grid>
                                     </Grid>  
