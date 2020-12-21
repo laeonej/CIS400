@@ -19,6 +19,7 @@ export default class SignUp extends React.Component {
             password: '',
             confirm: '',
             error: false,
+            errorMessage: ''
         }
     }
 
@@ -38,9 +39,22 @@ export default class SignUp extends React.Component {
         await this.setState({confirm: event.target.value})
     }
 
-    signup() {
+    badPassword(password) {
+        var str = password
+        var alphanumeric = /^(?=.*[a-zA-Z])(?=.*[0-9])/
+        return (!alphanumeric.test(str))
+    }
+
+    async signup() {
         if (this.state.password !== this.state.confirm) {
-            this.setState({error: true})
+            await this.setState({error: true, errorMessage: "Passwords do not match"})
+            console.log(this.state.errorMessage)
+        } else if (this.state.password.length < 6) {
+            await this.setState({error: true, errorMessage: "Password is too short"})
+            console.log(this.state.errorMessage)
+        } else if (this.badPassword(this.state.password)) {
+            await this.setState({error: true, errorMessage: "Password must contain letters and numbers"})
+            console.log(this.state.errorMessage)
         } else {
             auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
             .then(async (user) => {
