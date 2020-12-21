@@ -5,7 +5,7 @@ import Draggable from 'react-draggable';
 var cardHeight = 80;
 var cardWidth = 0.75 * cardHeight;
 
-export default class Card extends React.Component {
+export default class Drag extends React.Component {
     constructor(props) {
         super();
         this.handleClick = this.handleClick.bind(this)
@@ -18,33 +18,14 @@ export default class Card extends React.Component {
             tempY: 0,
             offsetX: 300,
             offsetY: 300,
+            imageId: "abc.jpg",
             inPrivate: false,
-            currPlayer: null,
-            type: "card"
+            currPlayer: null
         }
-    }
-
-    handleClick() {
-
-        this.setState({ drag: false })
-        if (this.state.backSide) {
-            this.setState({ backSide: false })
-        } else {
-            this.setState({ backSide: true })
-        }
-
-        this.props.socket.emit("flipCard", { inPrivate: this.state.inPrivate, tableCode: this.props.tableCode, cardId: this.props.cardId, backSide: this.state.backSide })
-
-        document.onmouseup = null
     }
 
     componentDidMount() {
 
-        this.props.socket.on('confirmFlipCard', data => {
-            if (data.tableCode == this.props.tableCode && data.cardId == this.props.cardId) {
-                this.setState({ backSide: data.backSide });
-            }
-        });
 
         this.props.socket.on('confirmStartDrag', data => {
             if (data.cardId == this.props.cardId && data.flag) {
@@ -83,18 +64,11 @@ export default class Card extends React.Component {
         this.setState({ tempX: this.state.posX, tempY: this.state.posY })
 
 
-        this.props.socket.emit('startDrag', {
-            "tableCode": this.props.tableCode,
-            "cardId": this.props.cardId,
-            "playerName": this.props.playerName,
-            "posX": this.state.posX,
-            "posY": this.state.posY,
-            "type": this.props.type
-        });
+        this.props.socket.emit('startDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY });
 
         document.onmouseup = this.handleClick;
 
-        document.onmousemove = this.dragDiv;
+        document.onmousemove = this.props.dragDiv;
 
         return false;
 
@@ -109,23 +83,21 @@ export default class Card extends React.Component {
         this.setState({ posX: parseInt(left), posY: parseInt(top) })
 
         this.props.socket.emit('midDrag', {
-            "tableCode": this.props.tableCode,
-            "cardId": this.props.cardId,
-            "playerName": this.props.playerName,
-            "posX": this.state.posX,
-            "posY": this.state.posY,
-            "type": this.state.type
+            "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY
         });
         document.onmouseup = this.stopDrag;
         return false;
     }
 
+
+
     inBounds = () => {
         return (this.state.posX > 0 && this.state.posX + cardWidth < 500 &&
             this.state.posY > 0 && this.state.posY + cardHeight < 400)
     }
-
     stopDrag = (e) => {
+
+
         if (!this.inBounds()) {
             this.state.posY = this.state.posY + cardHeight > 400 ? 420 : this.state.posY < 0 ? -100 : this.state.posY;
             this.state.posX = this.state.posX + cardWidth > 500 ? 520 : this.state.posX < 0 ? -80 : this.state.posX;
@@ -141,15 +113,7 @@ export default class Card extends React.Component {
         this.setState({ drag: false })
 
 
-        this.props.socket.emit('stopDrag', {
-            "tableCode": this.props.tableCode,
-            "isPrivate": this.state.isPrivate,
-            "cardId": this.props.cardId,
-            "playerName": this.props.playerName,
-            "posX": this.state.posX,
-            "posY": this.state.posY,
-            "type": this.state.type
-        });
+        this.props.socket.emit('stopDrag', { "tableCode": this.props.tableCode, "isPrivate": this.state.isPrivate, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY });
     }
 
     render() {
@@ -157,13 +121,12 @@ export default class Card extends React.Component {
             <>
                 {this.state.backSide ?
                     <Draggable
-                        position={{ x: this.state.posX, y: this.state.posY }}
+                        position={{
+                            x: this.state.posX, y: this.state.posY
+                        }}
                         onStart={this.startDrag}
                     >
-                        <div style={{
-                            position: 'absolute',
-                            display: this.state.isPrivate & (this.state.currPlayer != this.props.playerName) ? "none" : "block"
-                        }}>
+                        <div style={{ position: 'absolute', display: this.state.isPrivate & (this.state.currPlayer != this.props.playerName) ? "none" : "block" }}>
                             <img src={cardback} alt='card' height={cardHeight} width={cardWidth} />
                         </div>
                     </Draggable>

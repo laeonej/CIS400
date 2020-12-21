@@ -86,7 +86,8 @@ io.on('connection', client => {
                         49: { playerName: null, posX: 0, posY: 0, backSide: true },
                         50: { playerName: null, posX: 0, posY: 0, backSide: true },
                         51: { playerName: null, posX: 0, posY: 0, backSide: true }
-                    }
+                    },
+                    images: []
                 }
                 flag = true;
             }
@@ -136,6 +137,7 @@ io.on('connection', client => {
     })
 
     client.on('stopDrag', data => {
+
         table[data.tableCode].cards[data.cardId] = { playerName: null, posX: data.posX, posY: data.posY };
         client.broadcast.emit("confirmStopDrag", { playerName: data.playerName, isPrivate: data.isPrivate, tableCode: data.tableCode, cardId: data.cardId, posX: data.posX, posY: data.posY });
 
@@ -153,6 +155,11 @@ io.on('connection', client => {
         table[data.tableCode].players.splice(i, 1);
 
         client.broadcast.emit("confirmNewPlayer", { tableCode: data.tableCode, players: table[data.tableCode].players });
+    })
+
+    client.on("addImage", data => {
+        table[data.tableCode].images.push(data.src)
+        client.broadcast.emit("confirmAddImage", { tableCode: data.tableCode, src: data.src });
     })
 
     // STEP 6 ::=> It is a event which will handle user registration process

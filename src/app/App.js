@@ -5,7 +5,7 @@ import AppRoute from './AppRoute.js'
 
 function App() {
   return (
-    <AppRoute/>
+    <AppRoute />
   );
 }
 
