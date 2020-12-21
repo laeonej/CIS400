@@ -10,21 +10,22 @@ function TableJoin(props) {
     const [tableCode, setTableCode] = useState('')
     const [playerName, setPlayerName] = useState('')
 
-    useEffect(() => {
-        props.socket.on('confirmJoinTable', data => {
-            if (data.flag) {
-                props.changeInfo({ "tableCode": tableCode, "playerName": playerName, "players": data.players });
-            } else {
-                alert("No Lobby");
-            }
-        })
+    useEffect(
+        () => {
+            props.socket.on('confirmJoinTable', data => {
+                if (data.flag) {
+                    props.changeInfo({ "tableCode": tableCode, "playerName": playerName, "players": data.players });
+                } else {
+                    alert("No Lobby");
+                }
+            })
 
         
         if (user !== null && user !== undefined) {
             name = user.displayName
             setPlayerName(name)
         }
-    })
+    )
 
     function joinTable() {
         if (tableCode != "" && playerName != "") {
@@ -45,7 +46,7 @@ function TableJoin(props) {
     return (
         <Form>
             <Form.Group>
-                <Form.Label color='#000000'>Enter Lobby Code and Player Name</Form.Label>
+                <Form.Label>Enter Lobby Code and Player Name</Form.Label>
                 <br />
                     <Form.Control type="text" onChange={onTableCodeChange} placeholder="Enter Table Code" />
                     <br />
