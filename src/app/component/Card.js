@@ -18,7 +18,9 @@ export default class Card extends React.Component {
             tempY: 0,
             offsetX: 300,
             offsetY: 300,
-            imageId: "abc.jpg"
+            imageId: "abc.jpg",
+            inPrivate: false,
+            currPlayer: null
         }
     }
 
@@ -31,7 +33,7 @@ export default class Card extends React.Component {
             this.setState({ backSide: true })
         }
 
-        this.props.socket.emit("flipCard", { tableCode: this.props.tableCode, cardId: this.props.cardId, backSide: this.state.backSide })
+        this.props.socket.emit("flipCard", { inPrivate: this.state.inPrivate, tableCode: this.props.tableCode, cardId: this.props.cardId, backSide: this.state.backSide })
 
         document.onmouseup = null
     }
@@ -52,7 +54,12 @@ export default class Card extends React.Component {
 
         this.props.socket.on('confirmMidDrag', data => {
             if (data.tableCode == this.props.tableCode && data.cardId == this.props.cardId) {
-                this.setState({ "posX": data.posX, "posY": data.posY });
+                this.setState({ "posX": data.posX, "posY": data.posY, "currPlayer": data.playerName });
+            }
+        });
+        this.props.socket.on('confirmStopDrag', data => {
+            if (data.tableCode == this.props.tableCode && data.cardId == this.props.cardId) {
+                this.setState({ "currPlayer": data.playerName, "isPrivate": data.isPrivate, "posX": data.posX, "posY": data.posY });
             }
         });
     }
@@ -68,18 +75,15 @@ export default class Card extends React.Component {
         // IE uses srcElement, others use target
         var targ = e.target ? e.target : e.srcElement;
 
-        this.setState({ offsetX: e.clientX, offsetY: e.clientY });
+        this.setState({ offsetX: e.clientX, offsetY: e.clientY, currPlayer: this.props.playerName });
 
         if (!targ.style.left) { targ.style.left = '0px' };
         if (!targ.style.top) { targ.style.top = '0px' };
 
-
-        // console.log(e.clientX);
-        // console.log(targ.style.left);
-
         this.setState({ tempX: this.state.posX, tempY: this.state.posY })
 
-        this.props.socket.emit('startDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.state.playerName, "posX": this.state.posX, "posY": this.state.posY });
+
+        this.props.socket.emit('startDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY });
 
         document.onmouseup = this.handleClick;
 
@@ -98,15 +102,37 @@ export default class Card extends React.Component {
         this.setState({ posX: parseInt(left), posY: parseInt(top) })
 
         this.props.socket.emit('midDrag', {
-            "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.state.playerName, "posX": this.state.posX, "posY": this.state.posY
+            "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY
         });
         document.onmouseup = this.stopDrag;
         return false;
     }
 
+
+
+    inBounds = () => {
+        return (this.state.posX > 0 && this.state.posX + cardWidth < 500 &&
+            this.state.posY > 0 && this.state.posY + cardHeight < 400)
+    }
     stopDrag = (e) => {
+
+
+        if (!this.inBounds()) {
+            this.state.posY = this.state.posY + cardHeight > 400 ? 420 : this.state.posY < 0 ? -100 : this.state.posY;
+            this.state.posX = this.state.posX + cardWidth > 500 ? 520 : this.state.posX < 0 ? -80 : this.state.posX;
+
+            this.state.isPrivate = true;
+            console.log("this is correct\n");
+        }
+        if (this.state.isPrivate) {
+            if (this.inBounds()) {
+                this.state.isPrivate = false;
+            }
+        }
         this.setState({ drag: false })
-        this.props.socket.emit('endDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.state.playerName, "posX": this.state.posX, "posY": this.state.posY });
+
+
+        this.props.socket.emit('stopDrag', { "tableCode": this.props.tableCode, "isPrivate": this.state.isPrivate, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY });
     }
 
     render() {
@@ -119,7 +145,7 @@ export default class Card extends React.Component {
                         }}
                         onStart={this.startDrag}
                     >
-                        <div style={{ position: 'absolute' }}>
+                        <div style={{ position: 'absolute', display: this.state.isPrivate & (this.state.currPlayer != this.props.playerName) ? "none" : "block" }}>
                             <img src={cardback} alt='card' height={cardHeight} width={cardWidth} />
                         </div>
                     </Draggable>
@@ -132,7 +158,7 @@ export default class Card extends React.Component {
                         }}
                         onStart={this.startDrag}
                     >
-                        <div style={{ position: 'absolute' }}>
+                        <div style={{ position: 'absolute', display: this.state.isPrivate & (this.state.currPlayer != this.props.playerName) ? "none" : "block" }}>
                             <img src={this.props.frontSide} alt='card' height={cardHeight} width={cardWidth} />
                         </div>
                     </Draggable>

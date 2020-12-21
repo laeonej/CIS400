@@ -58,9 +58,10 @@ export class Menu extends React.Component {
     // };
 
     changeInfo = (data) => {
-        this.setState({ tableCode: data.tableCode });
         this.setState({ playerName: data.playerName });
         this.setState({ players: data.players });
+        this.setState({ tableCode: data.tableCode });
+
 
     }
 
@@ -84,7 +85,7 @@ export class Menu extends React.Component {
                 {this.state.createPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} />
+                            this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} playerName={this.state.playerName} />
                                 : <TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
                             : <p>Loading...</p>
                         }
@@ -94,7 +95,7 @@ export class Menu extends React.Component {
                 {this.state.joinPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} />
+                            this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} playerName={this.state.playerName} />
                                 : <TableJoin socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
                             : <p>Loading...</p>
                         }

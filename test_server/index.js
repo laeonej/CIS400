@@ -119,6 +119,7 @@ io.on('connection', client => {
         if (table[data.tableCode]) {
             if (table[data.tableCode].cards[data.cardId].playerName != null) {
                 flag = false;
+                console.log("this is checking it\n");
             } else {
                 table[data.tableCode].cards[data.cardId] = { playerName: data.playerName, posX: data.posX, posY: data.posY }
             }
@@ -128,17 +129,22 @@ io.on('connection', client => {
     })
 
     client.on('midDrag', data => {
-        table[data.tableCode].cards[data.cardId] = { playerName: data.playerName, posX: data.posX, posY: data.posY };
+        table[data.tableCode].cards[data.cardId].posX = data.posX;
+        table[data.tableCode].cards[data.cardId].posY = data.posY;
 
-        client.broadcast.emit("confirmMidDrag", { tableCode: data.tableCode, cardId: data.cardId, posX: data.posX, posY: data.posY });
+        client.broadcast.emit("confirmMidDrag", { playerName: data.playerName, tableCode: data.tableCode, cardId: data.cardId, posX: data.posX, posY: data.posY });
     })
 
     client.on('stopDrag', data => {
         table[data.tableCode].cards[data.cardId] = { playerName: null, posX: data.posX, posY: data.posY };
+        client.broadcast.emit("confirmStopDrag", { playerName: data.playerName, isPrivate: data.isPrivate, tableCode: data.tableCode, cardId: data.cardId, posX: data.posX, posY: data.posY });
+
     })
 
     client.on("flipCard", data => {
         table[data.tableCode].cards[data.cardId].backSide = data.backSide
+        table[data.tableCode].cards[data.cardId].playerName = null
+
         client.broadcast.emit("confirmFlipCard", { tableCode: data.tableCode, cardId: data.cardId, backSide: data.backSide });
     })
 
