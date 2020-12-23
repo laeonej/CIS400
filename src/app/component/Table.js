@@ -1,7 +1,5 @@
-import React, { useState, useRef } from 'react'
+import React from 'react'
 import Deck from './Deck';
-import Card from './Card';
-import cardFront from '../images/cardFronts/cardFront.js'
 import { Button } from 'react-bootstrap';
 import Image from './Image'
 import ReactDOM from 'react-dom';
@@ -22,7 +20,7 @@ class Table extends React.Component {
         this.setState({ tableLeft: rect.left, tableTop: rect.top });
 
         this.props.socket.on('confirmAddImage', data => {
-            if (data.tableCode == this.props.tableCode) {
+            if (data.tableCode === this.props.tableCode) {
                 const newImage = <Image src={data.src}
                     tableCode={data.tableCode}
                     socket={this.props.socket} />
@@ -81,7 +79,7 @@ class Table extends React.Component {
                     <Deck tableTop={this.state.tableTop} tableLeft={this.state.tableLeft} tableCode={this.props.tableCode} socket={this.props.socket} playerName={this.props.playerName} />
 
                     {this.state.previewUrl && <div className="image">
-                        <img src={this.state.previewUrl} alt='image' />
+                        <img src={this.state.previewUrl} alt='img' />
                         <span> {this.state.image.name} </span>
                     </div>}
 

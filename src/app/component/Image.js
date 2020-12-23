@@ -25,15 +25,15 @@ export default class Image extends React.Component {
     componentDidMount() {
         this.props.socket.on('confirmStartDrag', data => {
             console.log("this is working")
-            if (data.src == this.props.src && data.flag) {
+            if (data.src === this.props.src && data.flag) {
                 this.setState({ "drag": true });
             }
         });
         this.props.socket.on('confirmMidDrag', data => {
             console.log(data.src)
             console.log(this.props.src)
-            if (data.tableCode == this.props.tableCode &&
-                data.src == this.props.src) {
+            if (data.tableCode === this.props.tableCode &&
+                data.src === this.props.src) {
                 this.setState({
                     "posX": data.posX,
                     "posY": data.posY,
@@ -42,8 +42,8 @@ export default class Image extends React.Component {
             }
         });
         this.props.socket.on('confirmStopDrag', data => {
-            if (data.tableCode == this.props.tableCode &&
-                data.src == this.props.src) {
+            if (data.tableCode === this.props.tableCode &&
+                data.src === this.props.src) {
                 this.setState({
                     "currPlayer": data.playerName,
                     "isPrivate": data.isPrivate,
@@ -57,7 +57,7 @@ export default class Image extends React.Component {
     startDrag = (e) => {
         // determine event object
         if (!e) {
-            var e = window.event;
+            e = window.event;
         }
 
         if (e.preventDefault) e.preventDefault();
@@ -90,7 +90,7 @@ export default class Image extends React.Component {
 
     dragDiv = (e) => {
         if (!this.state.drag) { return };
-        if (!e) { var e = window.event };
+        if (!e) { e = window.event };
 
         var left = this.state.tempX + e.clientX - this.state.offsetX + 'px';
         var top = this.state.tempY + e.clientY - this.state.offsetY + 'px';
@@ -154,7 +154,7 @@ export default class Image extends React.Component {
                     >
                         <div style={{
                             position: 'absolute',
-                            display: this.state.isPrivate & (this.state.currPlayer != this.props.playerName) ? "none" : "block"
+                            display: this.state.isPrivate & (this.state.currPlayer !== this.props.playerName) ? "none" : "block"
                         }}>
                             <img src={this.props.src} alt='card' height={cardHeight} width={cardWidth} />
                         </div>

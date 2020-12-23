@@ -43,7 +43,7 @@ export default function MenuBar(props) {
                         <Link className={classes.titleLink} underline='none' href='/'>
                             table
                         </Link>
-                        <img src={logo} />
+                        <img src={logo} alt='logo' />
                     </Typography>
                     {user !== null && user !== undefined ?
                         <>

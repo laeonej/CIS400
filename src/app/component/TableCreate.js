@@ -5,16 +5,8 @@ import { UserContext } from '../../provider/UserProvider'
 function TableCreate(props) {
 
     const user = useContext(UserContext)
-    var name
 
     const [playerName, setPlayerName] = useState('')
-    
-    // componentDidMount() {
-    //     this.props.socket.on('confirmCreateTable', data => {
-    //         console.log(data.players);
-    //         this.props.changeInfo({ "tableCode": data.tableCode, "playerName": this.state.playerName, "players": data.players });
-    //     });
-    // }
 
     useEffect(() => {
         props.socket.on('confirmCreateTable', data => {
@@ -23,17 +15,16 @@ function TableCreate(props) {
 
         
         if (user !== null && user !== undefined) {
-            name = user.displayName
-            setPlayerName(name)
+            setPlayerName(user.displayName)
         }
-    })
+    }, [props, user, playerName])
 
     function onPlayerNameChange(e) {
         setPlayerName(e.target.value);
     }
 
     function createTable() {
-        if (playerName != "") {
+        if (playerName !== "") {
             props.socket.emit('createTable', { "playerName": playerName });
         } else {
             alert("Enter All Inputs");
@@ -51,10 +42,10 @@ function TableCreate(props) {
                     onChange={onPlayerNameChange} 
                     placeholder="Enter Player Name"
                     value = {playerName}
-                    disabled = {name ? true : false} />
+                    disabled = {playerName ? true : false} />
                 <br />
             </Form.Group>
-            <Button disabled={playerName == ""} onClick={createTable} variant="primary" type="button">
+            <Button disabled={playerName === ""} onClick={createTable} variant="primary" type="button">
                 Create
             </Button>
         </Form>

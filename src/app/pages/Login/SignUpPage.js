@@ -2,8 +2,8 @@ import React from 'react'
 import MenuBar from "../../component/MenuBar"
 import { Card, CardContent, TextField, Typography, Button, Divider, Grid, Link } from '@material-ui/core'
 import Google from '../../images/logo/google.jpg'
-import { auth, generateUserDocument } from '../../firebase.js'
-import { red } from '@material-ui/core/colors'
+import { auth, generateUserDocument, firestore } from '../../firebase.js'
+
 
 export default class SignUp extends React.Component {
 
@@ -19,9 +19,19 @@ export default class SignUp extends React.Component {
             username: '',
             password: '',
             confirm: '',
-            error: false,
-            errorMessage: ''
+            error: 'none',
+            errorMessage: '',
+            usernameError: false,
+            existingUsers: '',
+            anchorEl: null
         }
+    }
+
+    async componentDidMount() {
+        const snapshot = await firestore.collection('users').get()
+        const names = snapshot.docs.map(doc => doc.data().displayName.toLowerCase());
+        console.log(names.sort())
+        this.setState({existingUsers: names.sort()})
     }
 
     async emailInput(event) {
@@ -29,7 +39,8 @@ export default class SignUp extends React.Component {
     }
 
     async usernameInput(event) {
-        await this.setState({username: event.target.value})
+        await this.setState({username: event.target.value, anchorEl: event.currentTarget})
+
     }
 
     async passwordInput(event) {
@@ -48,15 +59,18 @@ export default class SignUp extends React.Component {
 
     async signup() {
         if (this.state.password !== this.state.confirm) {
-            await this.setState({error: true, errorMessage: "Passwords do not match"})
+            await this.setState({error: 'password', errorMessage: "Passwords do not match"})
             console.log(this.state.errorMessage)
         } else if (this.state.password.length < 6) {
-            await this.setState({error: true, errorMessage: "Password is too short"})
+            await this.setState({error: 'password', errorMessage: "Password is too short"})
             console.log(this.state.errorMessage)
         } else if (this.badPassword(this.state.password)) {
-            await this.setState({error: true, errorMessage: "Password must contain letters and numbers"})
+            await this.setState({error: 'password', errorMessage: "Password must contain letters and numbers"})
             console.log(this.state.errorMessage)
-        } else {
+        } else if (false) {
+
+        } 
+        else {
             auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
             .then(async (user) => {
                 console.log(user)
@@ -64,9 +78,14 @@ export default class SignUp extends React.Component {
                     displayName: this.state.username
                 })
                 generateUserDocument(user.user)
+            }).catch((err) => {
+                this.setState({error: 'email', errorMessage: err.message})
             })
         }
     }
+
+    
+
 
 
     render() {
@@ -80,20 +99,35 @@ export default class SignUp extends React.Component {
                                 <Typography variant='h4' align='center' style={{marginBottom: '5px'}}>
                                     Sign Up
                                 </Typography>
-                                <Divider/>
-                                <form style={{marginTop: '10px'}}>
+                                <Divider style={{marginTop: '15px', marginBottom: '20px'}}/>
+                                <form style={{marginTop: '20px'}}>
                                     <Grid container direction='column' justify='center' alignItems='center' spacing={3}>
                                         <Grid item xs>
-                                            <TextField required id='email' label='Email' type='email' onChange={this.emailInput}/>
+                                            <TextField error={this.state.error === 'email'} variant='outlined' required id='email' label='Email' type='email' onChange={this.emailInput}/>
                                         </Grid>
                                         <Grid item xs>
-                                            <TextField required id='username' label='Username' type='text' onChange={this.usernameInput}/>
+                                            <TextField error={this.state.error === 'username'} variant='outlined' required id='username' label='Username' type='text' onChange={this.usernameInput}/>
+                                            {/* <Popover
+                                                open={Boolean(this.state.anchorEl)}
+                                                anchorEl={this.state.anchorEl}
+                                                onClose={this.setState({anchorEl: null})}
+                                                anchorOrigin={{
+                                                    vertical: 'center',
+                                                    horizontal: 'right',
+                                                }}
+                                                transformOrigin={{
+                                                    vertical: 'center',
+                                                    horizontal: 'left',
+                                                }}
+                                            >
+                                                The content of the Popover.
+                                            </Popover> */}
                                         </Grid>
                                         <Grid item xs>
-                                            <TextField required id='password' label='Password' type='password' onChange={this.passwordInput}/>
+                                            <TextField error={this.state.error === 'password'} variant='outlined' required id='password' label='Password' type='password' onChange={this.passwordInput}/>
                                         </Grid>
                                         <Grid item xs>
-                                            <TextField required id='passwordConfirm' label='Confirm Password' type='password' onChange={this.passwordConfInput}/>
+                                            <TextField error={this.state.error === 'password'} variant='outlined' required id='passwordConfirm' label='Confirm Password' type='password' onChange={this.passwordConfInput}/>
                                         </Grid>
                                         <Grid item xs>
                                             <Button variant='contained' color='primary' onClick={this.signup}>Sign up</Button>

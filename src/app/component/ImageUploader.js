@@ -40,7 +40,7 @@ const ImageUploader = () => {
                 />
             </div>
             {previewUrl && <div className="image">
-                <img src={previewUrl} alt='image' />
+                <img src={previewUrl} alt='img' />
                 <span> {image.name} </span>
             </div>}
         </div>

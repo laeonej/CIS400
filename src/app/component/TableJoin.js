@@ -5,30 +5,27 @@ import { UserContext } from '../../provider/UserProvider'
 function TableJoin(props) {
     
     const user = useContext(UserContext)
-    var name
 
     const [tableCode, setTableCode] = useState('')
     const [playerName, setPlayerName] = useState('')
 
-    useEffect(
-        () => {
-            props.socket.on('confirmJoinTable', data => {
-                if (data.flag) {
-                    props.changeInfo({ "tableCode": tableCode, "playerName": playerName, "players": data.players });
-                } else {
-                    alert("No Lobby");
-                }
-            })
+    useEffect(() => {
+        props.socket.on('confirmJoinTable', data => {
+            if (data.flag) {
+                props.changeInfo({ "tableCode": tableCode, "playerName": playerName, "players": data.players });
+            } else {
+                alert("No Lobby");
+            }
+        })
 
         
         if (user !== null && user !== undefined) {
-            name = user.displayName
-            setPlayerName(name)
+            setPlayerName(user.displayName)
         }
-        })
+    }, [props, tableCode, playerName, user])
 
     function joinTable() {
-        if (tableCode != "" && playerName != "") {
+        if (tableCode !== "" && playerName !== "") {
             props.socket.emit('joinTable', { "tableCode": tableCode, "playerName": playerName });
         } else {
             alert("Enter All Inputs");
@@ -55,10 +52,10 @@ function TableJoin(props) {
                         onChange={onPlayerNameChange} 
                         placeholder="Enter Player Name" 
                         value={playerName}
-                        disabled={name ? true : false}/>
+                        disabled={playerName ? true : false}/>
                     <br />
                 </Form.Group>
-                <Button disabled={tableCode == "" && playerName == ""} onClick={joinTable} variant="primary" type="button">
+                <Button disabled={tableCode === "" && playerName === ""} onClick={joinTable} variant="primary" type="button">
                     Join
                 </Button>
             </Form>
