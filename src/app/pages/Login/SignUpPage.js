@@ -21,9 +21,8 @@ export default class SignUp extends React.Component {
             confirm: '',
             error: 'none',
             errorMessage: '',
-            usernameError: false,
+            usernameError: '',
             existingUsers: '',
-            anchorEl: null
         }
     }
 
@@ -39,8 +38,20 @@ export default class SignUp extends React.Component {
     }
 
     async usernameInput(event) {
-        await this.setState({username: event.target.value, anchorEl: event.currentTarget})
-
+        var entered = event.target.value
+        if (entered.length < 3) {
+            await this.setState({username: entered,
+                                 error: 'username',
+                                 usernameError: 'Username is too short'})
+        } else if (this.state.existingUsers.includes(entered)) {
+            await this.setState({username: entered,
+                                error: 'username',
+                                usernameError: 'Username is taken'})
+        } else {
+            await this.setState({username: entered,
+                                 error: 'none',
+                                 usernameError: ''})
+        }
     }
 
     async passwordInput(event) {
@@ -60,15 +71,12 @@ export default class SignUp extends React.Component {
     async signup() {
         if (this.state.password !== this.state.confirm) {
             await this.setState({error: 'password', errorMessage: "Passwords do not match"})
-            console.log(this.state.errorMessage)
         } else if (this.state.password.length < 6) {
             await this.setState({error: 'password', errorMessage: "Password is too short"})
-            console.log(this.state.errorMessage)
         } else if (this.badPassword(this.state.password)) {
             await this.setState({error: 'password', errorMessage: "Password must contain letters and numbers"})
-            console.log(this.state.errorMessage)
-        } else if (false) {
-
+        } else if (this.state.error === 'username') {
+            await this.setState({ errorMessage : this.state.usernameError})
         } 
         else {
             auth.createUserWithEmailAndPassword(this.state.email, this.state.password)
@@ -83,9 +91,6 @@ export default class SignUp extends React.Component {
             })
         }
     }
-
-    
-
 
 
     render() {
@@ -107,21 +112,9 @@ export default class SignUp extends React.Component {
                                         </Grid>
                                         <Grid item xs>
                                             <TextField error={this.state.error === 'username'} variant='outlined' required id='username' label='Username' type='text' onChange={this.usernameInput}/>
-                                            {/* <Popover
-                                                open={Boolean(this.state.anchorEl)}
-                                                anchorEl={this.state.anchorEl}
-                                                onClose={this.setState({anchorEl: null})}
-                                                anchorOrigin={{
-                                                    vertical: 'center',
-                                                    horizontal: 'right',
-                                                }}
-                                                transformOrigin={{
-                                                    vertical: 'center',
-                                                    horizontal: 'left',
-                                                }}
-                                            >
-                                                The content of the Popover.
-                                            </Popover> */}
+                                            {this.state.error === 'username' ? 
+                                            <Typography variant='body2' color='error'>{this.state.usernameError}</Typography>
+                                            : <></>}
                                         </Grid>
                                         <Grid item xs>
                                             <TextField error={this.state.error === 'password'} variant='outlined' required id='password' label='Password' type='password' onChange={this.passwordInput}/>
@@ -134,8 +127,8 @@ export default class SignUp extends React.Component {
                                         </Grid>
                                         <Grid item xs>
                                             {this.state.error ?
-                                                <span style={{color: 'red'}}>{this.state.errorMessage}</span>
-                                                : <span></span>
+                                                <Typography variant='body2' color='error'>{this.state.errorMessage}</Typography>
+                                                : <></>
                                             }
                                         </Grid>
                                         <Grid item xs>
