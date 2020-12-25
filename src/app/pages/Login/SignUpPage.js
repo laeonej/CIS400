@@ -1,7 +1,6 @@
 import React from 'react'
 import MenuBar from "../../component/MenuBar"
 import { Card, CardContent, TextField, Typography, Button, Divider, Grid, Link } from '@material-ui/core'
-import Google from '../../images/logo/google.jpg'
 import { auth, generateUserDocument, firestore } from '../../firebase.js'
 
 
@@ -130,9 +129,6 @@ export default class SignUp extends React.Component {
                                                 <Typography variant='body2' color='error'>{this.state.errorMessage}</Typography>
                                                 : <></>
                                             }
-                                        </Grid>
-                                        <Grid item xs>
-                                            <img src={Google} alt="Sign up with Google" style={{height: '40px', width: '40px'}}/>
                                         </Grid>
                                         <Grid item xs>
                                             <Link href='/login'>
