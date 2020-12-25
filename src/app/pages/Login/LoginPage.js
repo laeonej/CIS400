@@ -13,7 +13,9 @@ export class Login extends React.Component {
         this.passwordInput = this.passwordInput.bind(this)
         this.state = {
             email : '',
-            password: ''
+            password: '',
+            error: false,
+            errorMessage: ''
         }
     }
 
@@ -29,7 +31,10 @@ export class Login extends React.Component {
     async login() {
         await auth.signInWithEmailAndPassword(this.state.email, this.state.password)
         .catch(err => {
-            console.error('Error signing in with email and password', err)
+            this.setState({ error: true, 
+                            errorMessage: 'Password is not correct or an account with the email provided does not exist.',
+                            })
+            document.getElementById('password').value = ''
         })
     }
 
@@ -55,6 +60,12 @@ export class Login extends React.Component {
                                         </Grid>
                                         <Grid item xs>
                                             <Button variant='contained' color='primary' onClick={this.login}>Login</Button>
+                                        </Grid>
+                                        <Grid item xs>
+                                            {this.state.error ?
+                                                <Typography variant='body2' color='error'>{this.state.errorMessage}</Typography>
+                                                : <></>
+                                            }
                                         </Grid>
                                         <Grid item xs>
                                             <img src={Google} alt="Sign in with Google" style={{height: '40px', width: '40px'}}/>
