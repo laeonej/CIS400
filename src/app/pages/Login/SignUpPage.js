@@ -43,7 +43,7 @@ export default class SignUp extends React.Component {
             await this.setState({username: entered,
                                  error: 'username',
                                  usernameError: 'Username is too short'})
-        } else if (this.state.existingUsers.includes(entered)) {
+        } else if (this.state.existingUsers.includes(entered.toLowerCase())) {
             await this.setState({username: entered,
                                 error: 'username',
                                 usernameError: 'Username is taken'})

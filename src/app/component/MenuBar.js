@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { AppBar, Toolbar, Typography, Link, makeStyles, Button } from "@material-ui/core";
+import { AppBar, Toolbar, Typography, Link, makeStyles } from "@material-ui/core";
 import logo from '../images/logo/tablelogo.png'
 import { UserContext } from '../../provider/UserProvider'
 import { auth } from '../firebase.js'
@@ -50,7 +50,7 @@ export default function MenuBar(props) {
                             <Typography className={classes.username}>
                                 {user.displayName}
                             </Typography>
-                            <Button color='primary' onClick={() => { auth.signOut() }}>Sign out</Button>
+                            <Link className={classes.otherLinks} onClick={() => { auth.signOut() }}>Sign out</Link>
                         </>
                         :
                         <>
