@@ -19,32 +19,41 @@ export const firestore = firebase.firestore()
 
 export const generateUserDocument = async user => {
     if (!user) return
-    const userRef = firestore.doc(`users/${user.uid}`)
+    const userRef = firestore.doc(`users/${user.displayName}`)
     const snapshot = await userRef.get();
     if (!snapshot.exists) {
         const { email, displayName } = user;
         try {
             await userRef.set({
                 displayName,
-                email
+                email,
+                wins: 0,
+                loses: 0
             })
         } catch (err) {
             console.error('Error creating doc', err)
         }
     }
 
-    return getUserDoc(user.uid)
+    return getUserDoc(user.displayName)
 }
 
+export const getUserStats = async playerName => {
+    if(!playerName) return
+    const userDoc = await firestore.collection('users').doc(playerName).get()
+    return(
+        userDoc.data()
+    )
+}
 
-
-const getUserDoc = async uid => {
-    if (!uid) return null
+const getUserDoc = async displayName => {
+    if (!displayName) return null
     try {
-        const userDoc = await firestore.collection('users').doc(uid).get()
+        const userDoc = await firestore.collection('users').doc(displayName).get()
         return {
-            uid,
+            displayName,
             ...userDoc.data()
+            
         }
 
     } catch (err) {
@@ -52,3 +61,4 @@ const getUserDoc = async uid => {
     }
     
 }
+

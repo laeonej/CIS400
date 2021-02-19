@@ -82,7 +82,7 @@ export default class SignUp extends React.Component {
             .then(async (user) => {
                 console.log(user)
                 await user.user.updateProfile({
-                    displayName: this.state.username
+                    displayName: this.state.username,
                 })
                 generateUserDocument(user.user)
             }).catch((err) => {

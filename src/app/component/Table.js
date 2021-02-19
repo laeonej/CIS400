@@ -1,18 +1,29 @@
 import React from 'react'
 import Deck from './Deck';
-import { Button } from 'react-bootstrap';
 import Image from './Image'
 import ReactDOM from 'react-dom';
-
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
+import PlayerInfo from './PlayerInfo.js';
 class Table extends React.Component {
     constructor(props) {
         super(props);
+        this.handlePlayerMenuOpen = this.handlePlayerMenuOpen.bind(this)
+        this.handlePlayerMenuClose = this.handlePlayerMenuClose.bind(this)
         this.state = {
             images: [],
             previewUrls: [],
             tableLeft: 0,
-            tableTop: 0
+            tableTop: 0,
+            open: false,
         }
+    }
+
+    handlePlayerMenuOpen() {
+        this.setState({open: true});
+    }
+
+    handlePlayerMenuClose() {
+        this.setState({open: false});
     }
 
     componentDidMount() {
@@ -86,7 +97,32 @@ class Table extends React.Component {
                     <h2> {this.props.tableCode} </h2>
                     {this.props.players ?
                         <div> {[...this.props.players].map((player, index) => (
-                            <p key={index}> {player} </p>
+                            <>
+                            <span onClick={this.handlePlayerMenuOpen}>{player}</span>
+                                    <Dialog 
+                                        open={this.state.open}
+                                        onClose={this.handlePlayerMenuClose}
+                                    >
+                                        <DialogTitle>User: {player}</DialogTitle>
+                                        <DialogContent>
+                                            <PlayerInfo name={player}/>
+                                        </DialogContent>
+                                        <DialogActions>
+                                        <Button onClick={this.handlePlayerMenuClose}>
+                                            Add Friend
+                                        </Button>
+                                        <Button onClick={this.handlePlayerMenuClose}>
+                                            Message
+                                        </Button>
+                                        <Button onClick={this.handlePlayerMenuClose} color="secondary" autoFocus>
+                                            Mute
+                                        </Button>
+                                        </DialogActions>
+
+                                    </Dialog>
+                                
+                            </>
+                            
                         ))}
                         </div > :
                         <div></div>
