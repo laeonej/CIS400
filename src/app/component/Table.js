@@ -4,6 +4,9 @@ import Image from './Image'
 import ReactDOM from 'react-dom';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import PlayerInfo from './PlayerInfo.js';
+
+
+
 class Table extends React.Component {
     constructor(props) {
         super(props);
@@ -15,6 +18,8 @@ class Table extends React.Component {
             tableLeft: 0,
             tableTop: 0,
             open: false,
+            currPlayer: this.props.playerName,
+            isGuest: false
         }
     }
 
@@ -108,7 +113,7 @@ class Table extends React.Component {
                                             <PlayerInfo name={player}/>
                                         </DialogContent>
                                         <DialogActions>
-                                        <Button onClick={this.handlePlayerMenuClose}>
+                                        <Button disable={true} onClick={this.handlePlayerMenuClose}>
                                             Add Friend
                                         </Button>
                                         <Button onClick={this.handlePlayerMenuClose}>
@@ -118,7 +123,6 @@ class Table extends React.Component {
                                             Mute
                                         </Button>
                                         </DialogActions>
-
                                     </Dialog>
                                 
                             </>

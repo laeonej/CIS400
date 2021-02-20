@@ -46,6 +46,17 @@ export const getUserStats = async playerName => {
     )
 }
 
+export const didRequest = async (srcName, tgtName) => {
+    if(!srcName || !tgtName) return false
+}
+
+const sendRequest = async (srcName, tgtName) => {
+    const userRef = firestore.collection('users').doc(srcName)
+
+    await userRef.update({requested: firestore.arrayUnion(tgtName)})
+
+}
+
 const getUserDoc = async displayName => {
     if (!displayName) return null
     try {

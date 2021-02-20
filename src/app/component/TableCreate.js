@@ -7,6 +7,7 @@ function TableCreate(props) {
     const user = useContext(UserContext)
 
     const [playerName, setPlayerName] = useState('')
+    const [isGuest, setIsGuest] = useState(true)
 
 
     useEffect(() => {
@@ -17,6 +18,7 @@ function TableCreate(props) {
         
         if (user !== null && user !== undefined) {
             setPlayerName(user.displayName)
+            setIsGuest(false)
         }
     }, [props, user, playerName])
 
@@ -43,7 +45,7 @@ function TableCreate(props) {
                     onChange={onPlayerNameChange} 
                     placeholder="Enter Player Name"
                     value = {playerName}
-                    disabled = {playerName ? true : false} />
+                    disabled = {!isGuest} />
                 <br />
             </Form.Group>
             <Button disabled={playerName === ""} onClick={createTable} variant="primary" type="button">

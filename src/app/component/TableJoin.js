@@ -8,6 +8,7 @@ function TableJoin(props) {
 
     const [tableCode, setTableCode] = useState('')
     const [playerName, setPlayerName] = useState('')
+    const [isGuest, setIsGuest] = useState(true)
 
     useEffect(() => {
         props.socket.on('confirmJoinTable', data => {
@@ -21,6 +22,7 @@ function TableJoin(props) {
         
         if (user !== null && user !== undefined) {
             setPlayerName(user.displayName)
+            setIsGuest(false)
         }
     }, [props, tableCode, playerName, user])
 
@@ -52,7 +54,7 @@ function TableJoin(props) {
                         onChange={onPlayerNameChange} 
                         placeholder="Enter Player Name" 
                         value={playerName}
-                        disabled={playerName ? true : false}/>
+                        disabled={!isGuest}/>
                     <br />
                 </Form.Group>
                 <Button disabled={tableCode === "" && playerName === ""} onClick={joinTable} variant="primary" type="button">
