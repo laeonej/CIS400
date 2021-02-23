@@ -44,7 +44,7 @@ export default class Card extends React.Component {
         // this.props.socket.on('confirmDealCard', data => {
         //     if (data.tableCode == this.props.tableCode) {
         //         this.props.changeDeck(this.props.cardId, data.inDeck)
-        //     }
+        //     }\
         // });
 
 
@@ -57,7 +57,7 @@ export default class Card extends React.Component {
 
         this.props.socket.on('confirmStartDrag', data => {
             if (data.cardId === this.props.cardId && data.flag) {
-                this.setState({ drag : true });
+                this.setState({ drag: true });
             }
         });
 

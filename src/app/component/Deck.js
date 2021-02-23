@@ -44,9 +44,9 @@ class Deck extends React.Component {
                 if (data.tableCode === this.props.tableCode &&
                     data.deckId === this.state.deckId) {
                     this.setState({
-                        posX : data.posX,
-                        posY : data.posY,
-                        currPlayer : data.playerName
+                        posX: data.posX,
+                        posY: data.posY,
+                        currPlayer: data.playerName
                     });
                 }
             }
@@ -58,10 +58,10 @@ class Deck extends React.Component {
                 if (data.tableCode === this.props.tableCode &&
                     data.deckId === this.state.deckId) {
                     this.setState({
-                        currPlayer : data.playerName,
-                        isPrivate : data.isPrivate,
-                        posX : data.posX,
-                        posY : data.posY
+                        currPlayer: data.playerName,
+                        isPrivate: data.isPrivate,
+                        posX: data.posX,
+                        posY: data.posY
                     });
                 }
             }
@@ -107,19 +107,19 @@ class Deck extends React.Component {
         this.setState({ cardData: currCardData })
 
         this.props.socket.emit('dealCard', {
-            'tableCode' : this.props.tableCode,
+            'tableCode': this.props.tableCode,
             'deckId': this.state.deckId,
-            'playerName' : this.props.playerName,
-            'inDeck' : inDeck,
-            'cardId' : id,
-            'type' : this.state.type
+            'playerName': this.props.playerName,
+            'inDeck': inDeck,
+            'cardId': id,
+            'type': this.state.type
         });
     }
 
     componentWillMount() {
         this.props.socket.on('confirmStartDrag', data => {
             if (data.deckId === this.state.deckId && data.flag) {
-                this.setState({ drag : true });
+                this.setState({ drag: true });
             }
         });
 
@@ -163,9 +163,9 @@ class Deck extends React.Component {
         var targ = e.target ? e.target : e.srcElement;
 
         this.setState({
-            offsetX : e.clientX,
-            offsetY : e.clientY,
-            currPlayer : this.props.playerName
+            offsetX: e.clientX,
+            offsetY: e.clientY,
+            currPlayer: this.props.playerName
         });
 
         if (!targ.style.left) { targ.style.left = '0px' };
@@ -174,16 +174,16 @@ class Deck extends React.Component {
         this.setState({ tempX: this.state.posX, tempY: this.state.posY })
 
         this.props.socket.emit('startDrag', {
-            'tableCode' : this.props.tableCode,
-            'deckId' : this.state.deckId,
-            'playerName' : this.props.playerName,
-            'posX' : this.state.posX,
-            'posY' : this.state.posY,
-            'type' : this.state.type
+            'tableCode': this.props.tableCode,
+            'deckId': this.state.deckId,
+            'playerName': this.props.playerName,
+            'posX': this.state.posX,
+            'posY': this.state.posY,
+            'type': this.state.type
         });
         //this.props.socket.emit('startDrag', { "tableCode": this.props.tableCode, "cardId": this.props.cardId, "playerName": this.props.playerName, "posX": this.state.posX, "posY": this.state.posY });
 
-        this.setState({ drag : true });
+        this.setState({ drag: true });
         document.onmouseup = this.stopDrag;
 
         document.onmousemove = this.dragDiv;
@@ -201,12 +201,12 @@ class Deck extends React.Component {
         this.setState({ posX: parseInt(left), posY: parseInt(top) })
 
         this.props.socket.emit('midDrag', {
-            'tableCode' : this.props.tableCode,
-            'deckId' : this.state.deckId,
-            'playerName' : this.props.playerName,
+            'tableCode': this.props.tableCode,
+            'deckId': this.state.deckId,
+            'playerName': this.props.playerName,
             'posX': this.state.posX,
-            'posY' : this.state.posY,
-            'type' : this.state.type
+            'posY': this.state.posY,
+            'type': this.state.type
         });
 
 
@@ -295,12 +295,12 @@ class Deck extends React.Component {
         })
 
         this.props.socket.emit('dealCard', {
-            'tableCode' : this.props.tableCode,
+            'tableCode': this.props.tableCode,
             'deckId': this.state.deckId,
-            'playerName' : this.props.playerName,
-            'inDeck' : false,
-            'cardId' : randIdx,
-            'type' : this.state.type
+            'playerName': this.props.playerName,
+            'inDeck': false,
+            'cardId': randIdx,
+            'type': this.state.type
         });
         // var currCards = document.getElementById("deck").getElementsByClassName("card");
 
