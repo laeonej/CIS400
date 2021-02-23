@@ -4,14 +4,11 @@ import cardFront from '../images/cardFronts/cardFront.js'
 // import { Button } from 'react-bootstrap';
 import Draggable from 'react-draggable';
 
-
 class Deck extends React.Component {
     constructor(props) {
         super(props);
 
         let data = []
-        console.log(this.props.tableLeft)
-        console.log(this.props.tableTop)
         for (var i = 0; i < 52; i++) {
             data.push({
                 isPrivate: false,
@@ -24,8 +21,8 @@ class Deck extends React.Component {
         this.state = {
             cards: [],
             orphanCards: [],
-            posX: 325,
-            posY: 350,
+            posX: this.props.tableLeft,
+            posY: this.props.tableTop,
             offsetX: 0,
             offsetY: 0,
             drag: false,
@@ -284,7 +281,7 @@ class Deck extends React.Component {
         let currCardData = this.state.cardData
         currCardData[randIdx].inDeck = false
         currCardData[randIdx].isPrivate = true
-        currCardData[randIdx].posY = 260
+        currCardData[randIdx].posY = 400
         currCardData[randIdx].owner = this.props.playerName
         // this.state.cardData[randIdx].inDeck = false;
         // this.state.cardData[randIdx].isPrivate = true;
@@ -315,7 +312,7 @@ class Deck extends React.Component {
                 </Button> */}
                 <div id="deck" style={{
                     position: "absolute",
-                    top: this.state.posY, left: this.state.posX
+                    top: this.props.tableTop, left: this.props.tableLeft
                 }}>
                     <div id="buttons">
                         <Draggable
@@ -341,8 +338,8 @@ class Deck extends React.Component {
                             cardId={id}
                             socket={this.props.socket}
                             playerName={this.props.playerName}
-                            parentX={this.state.posX}
-                            parentY={this.state.posY} />)
+                            tableTop={this.props.tableTop}
+                            tableLeft={this.props.tableLeft} />)
                     }
                 </div>
                 <div id="orphan-container">

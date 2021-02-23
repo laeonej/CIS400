@@ -15,8 +15,8 @@ class Table extends React.Component {
         this.state = {
             images: [],
             previewUrls: [],
-            tableLeft: 0,
-            tableTop: 0,
+            tableLeft: 200,
+            tableTop: 300,
             open: false,
             currPlayer: this.props.playerName,
             isGuest: false
@@ -24,16 +24,16 @@ class Table extends React.Component {
     }
 
     handlePlayerMenuOpen() {
-        this.setState({open: true});
+        this.setState({ open: true });
     }
 
     handlePlayerMenuClose() {
-        this.setState({open: false});
+        this.setState({ open: false });
     }
 
     componentDidMount() {
-        var rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
-        this.setState({ tableLeft: rect.left, tableTop: rect.top });
+        this.updateDimensions();
+        window.addEventListener('resize', this.updateDimensions);
 
         this.props.socket.on('confirmAddImage', data => {
             if (data.tableCode === this.props.tableCode) {
@@ -45,6 +45,12 @@ class Table extends React.Component {
             }
         });
     }
+
+    updateDimensions = () => {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+        var rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
+        this.setState({ tableLeft: rect.left, tableTop: rect.top });
+    };
 
     exitTable = () => {
         this.props.socket.emit("exitTable", {
@@ -103,16 +109,16 @@ class Table extends React.Component {
                     {this.props.players ?
                         <div> {[...this.props.players].map((player, index) => (
                             <>
-                            <span onClick={this.handlePlayerMenuOpen}>{player}</span>
-                                    <Dialog 
-                                        open={this.state.open}
-                                        onClose={this.handlePlayerMenuClose}
-                                    >
-                                        <DialogTitle>User: {player}</DialogTitle>
-                                        <DialogContent>
-                                            <PlayerInfo name={player}/>
-                                        </DialogContent>
-                                        <DialogActions>
+                                <span onClick={this.handlePlayerMenuOpen}>{player}</span>
+                                <Dialog
+                                    open={this.state.open}
+                                    onClose={this.handlePlayerMenuClose}
+                                >
+                                    <DialogTitle>User: {player}</DialogTitle>
+                                    <DialogContent>
+                                        <PlayerInfo name={player} />
+                                    </DialogContent>
+                                    <DialogActions>
                                         <Button disable={true} onClick={this.handlePlayerMenuClose}>
                                             Add Friend
                                         </Button>
@@ -122,11 +128,11 @@ class Table extends React.Component {
                                         <Button onClick={this.handlePlayerMenuClose} color="secondary" autoFocus>
                                             Mute
                                         </Button>
-                                        </DialogActions>
-                                    </Dialog>
-                                
+                                    </DialogActions>
+                                </Dialog>
+
                             </>
-                            
+
                         ))}
                         </div > :
                         <div></div>
@@ -138,7 +144,7 @@ class Table extends React.Component {
                         Exit
                     </Button>
                 </div>
-            </div>
+            </div >
         );
     }
 }

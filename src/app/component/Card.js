@@ -124,14 +124,14 @@ export default class Card extends React.Component {
         if (!this.state.drag) { return };
         if (!e) { e = window.event };
 
-        console.log("isPrivate " + this.props.cardData[this.props.cardId].isPrivate)
+        // console.log("isPrivate " + this.props.cardData[this.props.cardId].isPrivate)
 
-        console.log("posY " + this.props.cardData[this.props.cardId].posY)
+        // console.log("posY " + this.props.cardData[this.props.cardId].posY)
 
         var left = this.state.tempX + e.clientX - this.state.offsetX + 'px';
         var top = this.state.tempY + e.clientY - this.state.offsetY + 'px';
 
-        console.log("left " + left)
+        // console.log("left " + left)
 
         this.setState({ change: !this.state.change })
         this.props.changePos(this.props.cardId, parseInt(left), parseInt(top))
@@ -150,11 +150,10 @@ export default class Card extends React.Component {
     }
 
     inBounds = () => {
-        return (this.props.cardData[this.props.cardId].posX > -160 && this.props.cardData[this.props.cardId].posX + cardWidth < 270 &&
-            this.props.cardData[this.props.cardId].posY > -160 && this.props.cardData[this.props.cardId].posY + cardHeight < 230)
+        return (this.props.cardData[this.props.cardId].posX > 0 && this.props.cardData[this.props.cardId].posX + cardWidth < 500 &&
+            this.props.cardData[this.props.cardId].posY > 0 && this.props.cardData[this.props.cardId].posY + cardHeight < 400)
 
     }
-
 
     componentDidUpdate(prevProps) {
         if (this.props.change !== prevProps.change) // Check if it's a new user, you can also use some unique property, like the ID  (this.props.user.id !== prevProps.user.id)
@@ -164,22 +163,22 @@ export default class Card extends React.Component {
     }
 
     stopDrag = (e) => {
+        console.log(this.props.tableLeft + " " + this.props.tableTop)
+        console.log(this.props.cardData[this.props.cardId].posX + " " + this.props.cardData[this.props.cardId].posY)
         this.setState({ drag: false })
 
         if (!this.inBounds()) {
-            this.props.changePos(this.props.cardId,
-                this.props.cardData[this.props.cardId].posX + cardWidth > 270 ?
-                    295 : this.props.cardData[this.props.cardId].posX < -255 ? -315 : this.props.cardData[this.props.cardId].posX,
-                this.props.cardData[this.props.cardId].posY + cardHeight > 230 ?
-                    260 : this.props.cardData[this.props.cardId].posY < -160 ? -260 : this.props.cardData[this.props.cardId].posY);
+            // this.props.changePos(this.props.cardId,
+            //     this.props.cardData[this.props.cardId].posX + cardWidth > 270 ?
+            //         295 : this.props.cardData[this.props.cardId].posX < -255 ? -315 : this.props.cardData[this.props.cardId].posX,
+            //     this.props.cardData[this.props.cardId].posY + cardHeight > 230 ?
+            //         260 : this.props.cardData[this.props.cardId].posY < -160 ? -260 : this.props.cardData[this.props.cardId].posY);
             this.props.changePrivate(this.props.cardId, true);
-
         }
         if (this.props.cardData[this.props.cardId].isPrivate) {
             if (this.inBounds()) {
                 this.props.changePrivate(this.props.cardId, false);
             }
-
 
             this.props.socket.emit('stopDrag', {
                 "tableCode": this.props.tableCode,

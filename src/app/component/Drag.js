@@ -25,8 +25,6 @@ export default class Drag extends React.Component {
     }
 
     componentDidMount() {
-
-
         this.props.socket.on('confirmStartDrag', data => {
             if (data.cardId === this.props.cardId && data.flag) {
                 this.setState({ "drag": true });
@@ -89,19 +87,18 @@ export default class Drag extends React.Component {
         return false;
     }
 
-
-
     inBounds = () => {
         return (this.state.posX > 0 && this.state.posX + cardWidth < 500 &&
             this.state.posY > 0 && this.state.posY + cardHeight < 400)
     }
+
     stopDrag = (e) => {
-
         if (!this.inBounds()) {
-            this.setState({ posY: this.state.posY + cardHeight > 400 ? 420 : this.state.posY < 0 ? -100 : this.state.posY,
-                           posX: this.state.posX + cardWidth > 500 ? 520 : this.state.posX < 0 ? -80 : this.state.posX,
-                           isPrivate: true })
-
+            this.setState({
+                posY: this.state.posY + cardHeight > 400 ? 420 : this.state.posY < 0 ? -100 : this.state.posY,
+                posX: this.state.posX + cardWidth > 500 ? 520 : this.state.posX < 0 ? -80 : this.state.posX,
+                isPrivate: true
+            })
             console.log("this is correct\n");
         }
         if (this.state.isPrivate) {
@@ -130,7 +127,7 @@ export default class Drag extends React.Component {
                     </Draggable>
 
                     :
-                    
+
                     <Draggable
                         position={{
                             x: this.state.posX, y: this.state.posY
