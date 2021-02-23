@@ -40,6 +40,7 @@ export class Menu extends React.Component {
         socket.on("confirmNewPlayer", data => {
             if (data.tableCode === this.state.tableCode) {
                 this.setState({ players: data.players });
+                this.setState({ playerName: data.playerName });
             }
         });
 
@@ -68,7 +69,7 @@ export class Menu extends React.Component {
         this.setState({ players: data.players });
         this.setState({ tableCode: data.tableCode });
 
-
+        console.log("making table: " + this.state.playerName)
     }
 
     handleCreateClick() {
@@ -98,8 +99,18 @@ export class Menu extends React.Component {
                     this.state.createPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} playerName={this.state.playerName} />
-                                : <TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
+                            this.state.tableCode ?
+                                <Table players={this.state.players} 
+                                       tableCode={this.state.tableCode} 
+                                       changeInfo={this.changeInfo} 
+                                       socket={this.state.socket} 
+                                       playerName={this.state.playerName} 
+                                />
+                            : <TableCreate 
+                                socket={this.state.socket} 
+                                changeInfo={this.changeInfo} 
+                                tableCode={this.state.tableCode} 
+                                />
                             : <p>Loading...</p>
                         }
                     </header>

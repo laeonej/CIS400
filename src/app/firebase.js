@@ -1,4 +1,4 @@
-import firebase from 'firebase/app'
+import firebase from 'firebase'
 import "firebase/auth"
 import 'firebase/firestore'
 
@@ -28,7 +28,10 @@ export const generateUserDocument = async user => {
                 displayName,
                 email,
                 wins: 0,
-                loses: 0
+                loses: 0,
+                requested: [],
+                pending: [],
+                friends: [],
             })
         } catch (err) {
             console.error('Error creating doc', err)
@@ -53,11 +56,15 @@ export const didRequest = async (srcName, tgtName) => {
     if (!srcName || !tgtName) return false
 }
 
-const sendRequest = async (srcName, tgtName) => {
-    const userRef = firestore.collection('users').doc(srcName)
+export const sendRequest = async (srcName, tgtName) => {
+    console.log('srcName: '+ srcName +'tgtName: '+ tgtName)
+    const srcUserRef = firestore.collection('users').doc(srcName)
+    const tgtUserRef = firestore.collection('users').doc(tgtName)
 
-    await userRef.update({ requested: firestore.arrayUnion(tgtName) })
-
+    console.log(srcUserRef)
+    console.log(tgtUserRef)
+    await srcUserRef.update({ requested: firebase.firestore.FieldValue.arrayUnion(tgtName) })
+    await tgtUserRef.update({ pending: firebase.firestore.FieldValue.arrayUnion(srcName) })
 }
 
 const getUserDoc = async displayName => {
@@ -75,6 +82,11 @@ const getUserDoc = async displayName => {
     }
 
 }
+
+
+
+
+
 
 /** ANAYTICS **/
 
