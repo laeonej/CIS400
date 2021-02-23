@@ -42,8 +42,13 @@ export class Menu extends React.Component {
                 this.setState({ players: data.players });
             }
         });
+
+
     }
 
+    componentWillUnmount() {
+        updateAnalytics({ "type": "numDisconnections" })
+    }
     // registrationConfirmation = (data) => {
     //     // If registration successfully redirect to player list
     //     this.setState({ isRegistered: data });
@@ -89,7 +94,8 @@ export class Menu extends React.Component {
                     onJoinClick={this.handleJoinClick}
                     onCreateRoomClick={this.handleCreateRoomClick} />
                 {/* renders when you click create */}
-                {this.state.createPage &&
+                {
+                    this.state.createPage &&
                     <header className="App-header">
                         {this.state.socket ?
                             this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} playerName={this.state.playerName} />
@@ -99,7 +105,8 @@ export class Menu extends React.Component {
                     </header>
                 }
                 {/* renders when you click join */}
-                {this.state.joinPage &&
+                {
+                    this.state.joinPage &&
                     <header className="App-header">
                         {this.state.socket ?
                             this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} playerName={this.state.playerName} />
@@ -108,7 +115,7 @@ export class Menu extends React.Component {
                         }
                     </header>
                 }
-            </div>
+            </div >
 
         )
     }

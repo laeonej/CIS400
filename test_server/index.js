@@ -467,7 +467,7 @@ io.on('connection', client => {
 
     // STEP 10 ::=> When any player disconnect then it will handle the disconnect process
     client.on('disconnect', () => {
-        console.log("disconnect : " + client.id);
+        console.log("disconnected : " + client.id);
         if (typeof sockets[client.id] != "undefined") {
             if (sockets[client.id].is_playing) {
 
