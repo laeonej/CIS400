@@ -4,7 +4,7 @@ import Image from './Image'
 import ReactDOM from 'react-dom';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import PlayerInfo from './PlayerInfo.js';
-import { sendRequest } from '../firebase.js'
+import { acceptFriend, areFriendsWith, didRequest, hasFriendPending, sendRequest, removeFriend } from '../firebase.js'
 import { UserContext } from '../../provider/UserProvider';
 
 
@@ -202,15 +202,17 @@ function Table(props) {
     },[props, images])
 
     function handlePlayerMenuOpen(index) {
+        console.log('opened')
         let temp = open
         temp[index] = true
-        setOpen(temp)
+        setOpen([...temp])
     }
 
     function handlePlayerMenuClose(index) {
+        console.log('closed')
         let temp = open
         temp[index] = false
-        setOpen(temp)
+        setOpen([...temp])
     }
 
     function updateDimensions() {
@@ -265,9 +267,30 @@ function Table(props) {
         handleFile(imageFile);
     }
 
-    function sendInvite(tgtName) {
-        console.log('Send invite called')
-        sendRequest(playerName, tgtName)
+    async function friendButtonClick(tgtName) {
+        // if has pending invite from them add friend
+        if (await hasFriendPending(playerName, tgtName)) {
+            acceptFriend(playerName, tgtName)
+        } else if (await didRequest(playerName, tgtName)) {
+            return
+        } else if (!(await areFriendsWith(playerName, tgtName))) {
+            //send request
+            sendRequest(playerName, tgtName)
+        } else {
+            // are you sure (implement later)
+            //remove friend
+            removeFriend(playerName, tgtName)
+        }       
+    }
+
+    function buttonName(tgtName) {
+        if (playerName === tgtName) {
+            return 'Add Friend'
+        } else if (hasFriendPending(playerName, tgtName)) {
+            return 'Accept'
+        } else {
+            return 'Add Friend'
+        }
     }
 
     return (
@@ -290,20 +313,20 @@ function Table(props) {
                             <span on onClick={() => handlePlayerMenuOpen(index)}>{player}</span>
                             <Dialog
                                 open={open[index]}
-                                onClose={() => this.handlePlayerMenuClose(index)}
+                                onClose={() => handlePlayerMenuClose(index)}
                             >
                                 <DialogTitle>User: {player}</DialogTitle>
                                 <DialogContent>
                                     <PlayerInfo name={player} />
                                 </DialogContent>
                                 <DialogActions>
-                                    <Button disabled={false} onClick={() => sendInvite(player)}>
-                                        Add Friend
+                                    <Button disabled={playerName === player || isGuest} onClick={() => friendButtonClick(player)}>
+                                        {buttonName(player)}
                                     </Button>
-                                    <Button onClick={() => handlePlayerMenuClose(index)}>
+                                    <Button disabled={playerName === player} onClick={() => handlePlayerMenuClose(index)}>
                                         Message
                                     </Button>
-                                    <Button onClick={() => handlePlayerMenuClose(index)} color="secondary" autoFocus>
+                                    <Button disabled={playerName === player} onClick={() => handlePlayerMenuClose(index)} color="secondary" autoFocus>
                                         Mute
                                     </Button>
                                 </DialogActions>

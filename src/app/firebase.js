@@ -53,19 +53,50 @@ export const getUserStats = async playerName => {
 }
 
 export const didRequest = async (srcName, tgtName) => {
-    if (!srcName || !tgtName) return false
+    const srcDoc = await firestore.collection('users').doc(srcName).get()
+    return (srcDoc.data().requested.includes(tgtName))
+}
+
+export const areFriendsWith = async (srcName, tgtName) => {
+    const srcDoc = await firestore.collection('users').doc(srcName).get()
+    return (srcDoc.data().friends.includes(tgtName))
 }
 
 export const sendRequest = async (srcName, tgtName) => {
-    console.log('srcName: '+ srcName +'tgtName: '+ tgtName)
     const srcUserRef = firestore.collection('users').doc(srcName)
     const tgtUserRef = firestore.collection('users').doc(tgtName)
 
-    console.log(srcUserRef)
-    console.log(tgtUserRef)
     await srcUserRef.update({ requested: firebase.firestore.FieldValue.arrayUnion(tgtName) })
     await tgtUserRef.update({ pending: firebase.firestore.FieldValue.arrayUnion(srcName) })
 }
+
+// I(src) accept friend request from tgt
+export const acceptFriend = async (srcName, tgtName) => {
+    const srcUserRef = firestore.collection('users').doc(srcName)
+    const tgtUserRef = firestore.collection('users').doc(tgtName)
+
+    await srcUserRef.update({ friends: firebase.firestore.FieldValue.arrayUnion(tgtName) })
+    await tgtUserRef.update({ friends: firebase.firestore.FieldValue.arrayUnion(srcName) })
+    await srcUserRef.update({ pending: firebase.firestore.FieldValue.arrayRemove(tgtName)})
+    await tgtUserRef.update({ requested: firebase.firestore.FieldValue.arrayRemove(srcName)})
+}
+
+export const removeFriend = async (srcName, tgtName) => {
+    const srcUserRef = firestore.collection('users').doc(srcName)
+    const tgtUserRef = firestore.collection('users').doc(tgtName)
+
+    await srcUserRef.update({ friends: firebase.firestore.FieldValue.arrayRemove(tgtName)})
+    await srcUserRef.update({ friends: firebase.firestore.FieldValue.arrayRemove(srcName)})
+}
+
+// checks if the src (you) have a request from tgt (them) 
+export const hasFriendPending = async (srcName, tgtName) => {
+
+    const srcDoc = await firestore.collection('users').doc(srcName).get()
+    console.log(srcDoc.data().pending.includes(tgtName))
+    return (srcDoc.data().pending.includes(tgtName))
+}
+
 
 const getUserDoc = async displayName => {
     if (!displayName) return null
@@ -103,7 +134,7 @@ const getDate = async names => {
         hour12: false,
         timeZone: "America/New_York"
     }) + ":00:00";
-    if (hour == "24:00:00") { //Chrome uses 24 instead of 0 for hours
+    if (hour === "24:00:00") { //Chrome uses 24 instead of 0 for hours
         hour = "00:00:00"
     }
 

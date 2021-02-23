@@ -6,7 +6,7 @@ import { Grid } from '@material-ui/core'
 import TableCreate from '../../component/TableCreate';
 import TableJoin from '../../component/TableJoin';
 import io from "socket.io-client";
-import { updateAnalytics } from '../../firebase.js'
+import { updateAnalytics, hasFriendPending } from '../../firebase.js'
 
 export class Menu extends React.Component {
     constructor(props) {
@@ -82,6 +82,10 @@ export class Menu extends React.Component {
         this.setState({ joinPage: true })
     }
 
+    async testing() {
+        console.log(await hasFriendPending('abc123', 'aaa'))
+    }
+
     // setUser(user) {
     //     if (user != null) {
     //         this.setState({ playerName: user.displayName });
@@ -93,7 +97,8 @@ export class Menu extends React.Component {
             <div>
                 <MainMenu bool={this.state.menu}
                     onJoinClick={this.handleJoinClick}
-                    onCreateRoomClick={this.handleCreateRoomClick} />
+                    onCreateRoomClick={this.handleCreateRoomClick}
+                    testing={this.testing} />
                 {/* renders when you click create */}
                 {
                     this.state.createPage &&
@@ -145,6 +150,9 @@ function MainMenu(props) {
                     </Grid>
                     <Grid item >
                         <Buttons function={props.onCreateRoomClick} text='Create Room' />
+                    </Grid>
+                    <Grid item >
+                        <Buttons function={props.testing} text='test function' />
                     </Grid>
                 </Grid>
             </div>
