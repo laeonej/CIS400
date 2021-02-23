@@ -6,8 +6,7 @@ import { Grid } from '@material-ui/core'
 import TableCreate from '../../component/TableCreate';
 import TableJoin from '../../component/TableJoin';
 import io from "socket.io-client";
-
-
+import { updateAnalytics } from '../../firebase.js'
 
 export class Menu extends React.Component {
     constructor(props) {
@@ -35,6 +34,7 @@ export class Menu extends React.Component {
         const socket = io(endpoint, { transports: ['websocket'] });
         socket.on("connected", data => {
             this.setState({ socket: socket });
+            updateAnalytics({ "id": data.id, "type": "numConnections" })
         });
 
         socket.on("confirmNewPlayer", data => {
@@ -119,7 +119,7 @@ function MainMenu(props) {
 
     if (x) {
         return (<>
-            <MenuBar/>
+            <MenuBar />
             <div flex-grow={1}>
                 <Grid container spacing={10} justify='center'>
                     <Grid item >

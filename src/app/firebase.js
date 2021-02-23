@@ -38,22 +38,25 @@ export const generateUserDocument = async user => {
     return getUserDoc(user.displayName)
 }
 
+
+
+
 export const getUserStats = async playerName => {
-    if(!playerName) return
+    if (!playerName) return
     const userDoc = await firestore.collection('users').doc(playerName).get()
-    return(
+    return (
         userDoc.data()
     )
 }
 
 export const didRequest = async (srcName, tgtName) => {
-    if(!srcName || !tgtName) return false
+    if (!srcName || !tgtName) return false
 }
 
 const sendRequest = async (srcName, tgtName) => {
     const userRef = firestore.collection('users').doc(srcName)
 
-    await userRef.update({requested: firestore.arrayUnion(tgtName)})
+    await userRef.update({ requested: firestore.arrayUnion(tgtName) })
 
 }
 
@@ -64,12 +67,68 @@ const getUserDoc = async displayName => {
         return {
             displayName,
             ...userDoc.data()
-            
+
         }
 
     } catch (err) {
         console.error('Error fetching user', err)
     }
-    
+
 }
+
+/** ANAYTICS **/
+
+
+
+const getDate = async names => {
+
+    var timeNow = new Date();
+    var date = timeNow.toLocaleString("en-CA", {
+        timeZone: "America/New_York"
+    }).split(",")[0];
+    var hour = timeNow.toLocaleString("en-CA", {
+        hour: "2-digit",
+        hour12: false,
+        timeZone: "America/New_York"
+    }) + ":00:00";
+    if (hour == "24:00:00") { //Chrome uses 24 instead of 0 for hours
+        hour = "00:00:00"
+    }
+
+    console.log(date)
+    console.log(hour)
+
+    return [date, hour]
+
+}
+export const updateAnalytics = async user => {
+    if (!user) return
+    if (!user.type) return
+
+    //getting hour and time used as document id
+    var times = await getDate()
+    let date = times[0]
+    let hour = times[1]
+
+    let type = "numConnections"
+
+    const analyticsRef = firestore.doc("analytics/" + date + " " + hour)
+    const snapshot = await analyticsRef.get();
+
+    //creating data array to add/update database with using the passed in analytics type
+    let updateArray = {}
+    updateArray[user.type] = firebase.firestore.FieldValue.increment(1)
+
+    if (!snapshot.exists) {
+        firestore.doc("analytics/" + date + " " + hour).set(updateArray).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+    } else {
+        firestore.doc("analytics/" + date + " " + hour).update(updateArray).catch((error) => {
+            console.error("Error writing document: ", error);
+        });
+    }
+}
+
+
 
