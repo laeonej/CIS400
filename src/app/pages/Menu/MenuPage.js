@@ -6,7 +6,7 @@ import { Grid } from '@material-ui/core'
 import TableCreate from '../../component/TableCreate';
 import TableJoin from '../../component/TableJoin';
 import io from "socket.io-client";
-import { updateAnalytics } from '../../firebase.js'
+import { updateAnalytics, hasFriendPending } from '../../firebase.js'
 
 export class Menu extends React.Component {
     constructor(props) {
@@ -40,6 +40,7 @@ export class Menu extends React.Component {
         socket.on("confirmNewPlayer", data => {
             if (data.tableCode === this.state.tableCode) {
                 this.setState({ players: data.players });
+                this.setState({ playerName: data.playerName });
             }
         });
 
@@ -68,7 +69,7 @@ export class Menu extends React.Component {
         this.setState({ players: data.players });
         this.setState({ tableCode: data.tableCode });
 
-
+        console.log("making table: " + this.state.playerName)
     }
 
     handleCreateClick() {
@@ -79,6 +80,10 @@ export class Menu extends React.Component {
     handleJoinClick() {
         this.setState({ menu: false })
         this.setState({ joinPage: true })
+    }
+
+    async testing() {
+        console.log(await hasFriendPending('abc123', 'aaa'))
     }
 
     // setUser(user) {
@@ -92,14 +97,25 @@ export class Menu extends React.Component {
             <div>
                 <MainMenu bool={this.state.menu}
                     onJoinClick={this.handleJoinClick}
-                    onCreateRoomClick={this.handleCreateRoomClick} />
+                    onCreateRoomClick={this.handleCreateRoomClick}
+                    testing={this.testing} />
                 {/* renders when you click create */}
                 {
                     this.state.createPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} playerName={this.state.playerName} />
-                                : <TableCreate socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
+                            this.state.tableCode ?
+                                <Table players={this.state.players} 
+                                       tableCode={this.state.tableCode} 
+                                       changeInfo={this.changeInfo} 
+                                       socket={this.state.socket} 
+                                       playerName={this.state.playerName} 
+                                />
+                            : <TableCreate 
+                                socket={this.state.socket} 
+                                changeInfo={this.changeInfo} 
+                                tableCode={this.state.tableCode} 
+                                />
                             : <p>Loading...</p>
                         }
                     </header>
@@ -134,6 +150,9 @@ function MainMenu(props) {
                     </Grid>
                     <Grid item >
                         <Buttons function={props.onCreateRoomClick} text='Create Room' />
+                    </Grid>
+                    <Grid item >
+                        <Buttons function={props.testing} text='test function' />
                     </Grid>
                 </Grid>
             </div>

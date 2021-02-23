@@ -34,7 +34,7 @@ class Deck extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.state.cardData)
+        // console.log(this.state.cardData)
 
         this.props.socket.on('confirmMidDrag', data => {
             if (data.type === "deck") {
