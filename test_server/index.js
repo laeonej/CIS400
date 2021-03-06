@@ -2,7 +2,7 @@
 const server = require('http').createServer();
 const io = require('socket.io')(server);
 const PORT = 5000; // PORT of server
-const HOST = "https://table-server.vercel.app"; // Hosting Server change when you make it live on server according to your hosting server
+const HOST = "127.0.0.1"; // Hosting Server change when you make it live on server according to your hosting server
 var players = {}; // It will keep all the players data who have register using mobile number. you can use actual persistence database I have used this for temporery basis
 var sockets = {}; // stores all the connected clients
 var table = {}; // stores the ongoing game
