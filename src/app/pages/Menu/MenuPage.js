@@ -17,7 +17,7 @@ export class Menu extends React.Component {
             joinPage: false,
             createPage: false,
             menu: true,
-            endpoint: "http://localhost:5000",
+            endpoint: "https://table-server.vercel.app:5000",
             socket: null,
             isGameStarted: false,
             gameId: null,
@@ -105,16 +105,16 @@ export class Menu extends React.Component {
                     <header className="App-header">
                         {this.state.socket ?
                             this.state.tableCode ?
-                                <Table players={this.state.players} 
-                                       tableCode={this.state.tableCode} 
-                                       changeInfo={this.changeInfo} 
-                                       socket={this.state.socket} 
-                                       playerName={this.state.playerName} 
+                                <Table players={this.state.players}
+                                    tableCode={this.state.tableCode}
+                                    changeInfo={this.changeInfo}
+                                    socket={this.state.socket}
+                                    playerName={this.state.playerName}
                                 />
-                            : <TableCreate 
-                                socket={this.state.socket} 
-                                changeInfo={this.changeInfo} 
-                                tableCode={this.state.tableCode} 
+                                : <TableCreate
+                                    socket={this.state.socket}
+                                    changeInfo={this.changeInfo}
+                                    tableCode={this.state.tableCode}
                                 />
                             : <p>Loading...</p>
                         }
