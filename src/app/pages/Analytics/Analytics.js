@@ -7,7 +7,8 @@ export class Analytics extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            data: null
+            userdata: null,
+            tabledata: null
         }
     }
 
@@ -17,7 +18,10 @@ export class Analytics extends React.Component {
         var xValues = []
         var numConnections = []
         var numLogins = []
+        var numSignUps = []
         var numTables = []
+        var numTablesJoined = []
+
         const snapshot = await firestore.collection('analytics').get()
         const names = snapshot.docs.forEach((doc) => {
             xValues.push(doc.id);
@@ -34,10 +38,22 @@ export class Analytics extends React.Component {
                 numLogins.push(0);
             }
 
+            if (doc.data().numSignUps) {
+                numSignUps.push(doc.data().numSignUps);
+            } else {
+                numSignUps.push(0);
+            }
+
             if (doc.data().numTablesCreated) {
                 numTables.push(doc.data().numTablesCreated);
             } else {
                 numTables.push(0);
+            }
+
+            if (doc.data().numTablesJoined) {
+                numTablesJoined.push(doc.data().numTablesJoined);
+            } else {
+                numTablesJoined.push(0);
             }
         });
 
@@ -71,24 +87,56 @@ export class Analytics extends React.Component {
             x: xValues,
             y: numTables,
             line: {
-                color: '#444444'
+                color: '#111111'
             }
         }
 
-        this.setState({ data: [trace, trace2, trace3] });
+        var trace4 = {
+            type: "scatter",
+            mode: "lines",
+            name: 'Number of Tables Joined',
+            x: xValues,
+            y: numTablesJoined,
+            line: {
+                color: '#ff0000'
+            }
+        }
+
+        var trace5 = {
+            type: "scatter",
+            mode: "lines",
+            name: 'Number of Sign Ups',
+            x: xValues,
+            y: numSignUps,
+            line: {
+                color: '#ff0000'
+            }
+        }
+
+        this.setState({ userdata: [trace, trace2, trace5] });
+        this.setState({ tabledata: [trace3, trace4] });
 
     }
 
     render() {
         return (
+            <div>
+                <div>
+                    <Plot
+                        data={this.state.userdata}
+                        layout={{ width: 1200, height: 600, title: 'User Connections/Logins/Sign Ups' }}
+                    />
 
-            this.state.data ?
-                <Plot
-                    data={this.state.data}
-                    layout={{ width: 1200, height: 600, title: 'Analytics Dashboard' }}
-                />
-                :
-                <div></div>
+                </div>
+                <div>
+                    <Plot
+                        data={this.state.tabledata}
+                        layout={{ width: 1200, height: 600, title: 'Table Creations and Joins' }}
+                    />
+
+                </div>
+            </div>
+
         );
     }
 }

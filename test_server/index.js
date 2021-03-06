@@ -276,6 +276,11 @@ io.on('connection', client => {
         });
     })
 
+    client.on("sendMessage", data => {
+        data.message.author = "them"
+        client.broadcast.emit("messageSent", data);
+    })
+
     // STEP 6 ::=> It is a event which will handle user registration process
     client.on('checkUserDetail', data => {
         var flag = false;

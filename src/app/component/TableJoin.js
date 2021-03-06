@@ -16,7 +16,6 @@ function TableJoin(props) {
         props.socket.on('confirmJoinTable', data => {
             if (data.flag) {
                 props.changeInfo({ "tableCode": tableCode, "playerName": playerName, "players": data.players });
-                updateAnalytics({ "type": "numTablesJoined" })
             } else {
                 alert("No Lobby");
             }
@@ -32,6 +31,7 @@ function TableJoin(props) {
     function joinTable() {
         if (tableCode !== "" && playerName !== "") {
             props.socket.emit('joinTable', { "tableCode": tableCode, "playerName": playerName });
+            updateAnalytics({ "type": "numTablesJoined" })
         } else {
             alert("Enter All Inputs");
         }
