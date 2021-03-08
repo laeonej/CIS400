@@ -17,7 +17,7 @@ export class Menu extends React.Component {
             joinPage: false,
             createPage: false,
             menu: true,
-            endpoint: "https://cis-400.vercel.app/:5000",
+            endpoint: "http://3.142.54.184",
             socket: null,
             isGameStarted: false,
             gameId: null,
