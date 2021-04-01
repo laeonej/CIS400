@@ -6,8 +6,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mate
 import PlayerInfo from './PlayerInfo.js';
 import { acceptFriend, areFriendsWith, didRequest, hasFriendPending, sendRequest, removeFriend } from '../firebase.js'
 import { UserContext } from '../../provider/UserProvider';
-import { Launcher } from 'react-chat-window'
-import ChatWindow from './ChatWindow'
+import PlayerInfoCard from './PlayerInfoCard';
 
 
 // class Table extends React.Component {
@@ -27,7 +26,7 @@ import ChatWindow from './ChatWindow'
 //         }
 //     }
 
-
+    
 
 //     handlePlayerMenuOpen(index) {
 //         let temp = this.state.open;
@@ -59,7 +58,7 @@ import ChatWindow from './ChatWindow'
 //     }
 
 
-
+    
 
 
 
@@ -112,7 +111,7 @@ import ChatWindow from './ChatWindow'
 //         console.log('Send invite called')
 //         sendRequest(this.state.currPlayer, tgtName)
 //     }
-
+    
 //     render() {
 //         return (
 //             <div id="table " className="wrapper" onDragOver={this.handleDragOver} onDrop={this.handleDrop}>
@@ -174,8 +173,8 @@ import ChatWindow from './ChatWindow'
 
 function Table(props) {
     const user = useContext(UserContext)
-    const playerName = user.displayName
-
+    
+    
     // states
     const [images, setImages] = useState([])
     const [previewUrls, setPreviewUrls] = useState([])
@@ -185,12 +184,19 @@ function Table(props) {
     const [isGuest, setIsGuest] = useState(true)
     const [width, setWidth] = useState(0)
     const [height, setHeight] = useState(0)
-    const [messageList, setMessageList] = useState([])
+
+    let playerName = null
 
     useEffect(() => {
+
+        if(user !== null || user !== undefined) {
+            setIsGuest(false)
+            playerName = user.displayName
+        }
+
         updateDimensions()
         window.addEventListener('resize', updateDimensions);
-
+        
         props.socket.on('confirmAddImage', data => {
             if (data.tableCode === props.tableCode) {
                 const newImage = <Image src={data.src}
@@ -201,7 +207,7 @@ function Table(props) {
                 setImages(currImage)
             }
         })
-    }, [props, images])
+    },[props, images])
 
     function handlePlayerMenuOpen(index) {
         console.log('opened')
@@ -222,8 +228,8 @@ function Table(props) {
         setHeight(window.innerHeight)
         // console.log(ReactDOM.findDOMNode())
         // var rect = ReactDOM.findDOMNode(useRef.current).getBoundingClientRect();
-        setTableLeft((window.innerWidth - 500) / 2 + 440)
-        setTableTop((window.innerHeight - 400) / 2)
+        // setTableLeft(rect.left)
+        // setTableTop(rect.top)
     };
 
 
@@ -243,7 +249,7 @@ function Table(props) {
             src={url}
             tableCode={props.tableCode}
             socket={props.socket} />
-
+        
         let currImage = images
         currImage.push(newImage)
         setImages(currImage)
@@ -282,13 +288,13 @@ function Table(props) {
             // are you sure (implement later)
             //remove friend
             removeFriend(playerName, tgtName)
-        }
+        }       
     }
 
     function buttonName(tgtName) {
         if (playerName === tgtName) {
-            return 'Add Friend'
             console.log(tgtName)
+            return 'Add Friend'
         } else if (hasFriendPending(playerName, tgtName)) {
             return 'Accept'
         } else {
@@ -298,7 +304,6 @@ function Table(props) {
 
     return (
         <div id="table " className="wrapper" onDragOver={handleDragOver} onDrop={handleDrop}>
-            <div style={{ position: "relative", zIndex: '10000' }}><ChatWindow playerName={playerName} socket={props.socket} /></div>
             <div style={{
                 backgroundColor: 'green', height: 400, width: 500,
                 borderStyle: 'solid', borderWidth: 2, borderColor: 'black'
@@ -353,7 +358,7 @@ function Table(props) {
                     <div></div>
                 }
 
-                <div style={{ position: "absolute", top: 0, left: 0 }}>{images}</div>
+                <div style={{ position: "absolute", top: 300, left: 200 }}>{images}</div>
 
                 <Button onClick={exitTable} variant="primary" type="button">
                     Exit
