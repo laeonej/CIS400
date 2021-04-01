@@ -1,10 +1,10 @@
 import React from "react";
 import Buttons from '../../component/Button';
-import MenuBar from '../../component/MenuBar';
+import MenuBar from './MenuComponents/MenuBar';
 import Table from '../../component/Table';
 import { Grid } from '@material-ui/core'
-import TableCreate from '../../component/TableCreate';
-import TableJoin from '../../component/TableJoin';
+import TableCreate from './MenuComponents/TableCreate';
+import TableJoin from './MenuComponents/TableJoin';
 import io from "socket.io-client";
 import { updateAnalytics, hasFriendPending } from '../../firebase.js'
 
@@ -17,7 +17,7 @@ export class Menu extends React.Component {
             joinPage: false,
             createPage: false,
             menu: true,
-            endpoint: "http://localhost:5000",
+            endpoint: "http://3.142.54.184",
             socket: null,
             isGameStarted: false,
             gameId: null,
@@ -108,17 +108,16 @@ export class Menu extends React.Component {
                     <header className="App-header">
                         {this.state.socket ?
                             this.state.tableCode ?
-                                <Table players={this.state.players} 
-                                       tableCode={this.state.tableCode} 
-                                       changeInfo={this.changeInfo} 
-                                       socket={this.state.socket} 
-                                       playerName={this.state.playerName} 
-                                       isGuest={this.state.isGuest}
+                                <Table players={this.state.players}
+                                    tableCode={this.state.tableCode}
+                                    changeInfo={this.changeInfo}
+                                    socket={this.state.socket}
+                                    playerName={this.state.playerName}
                                 />
-                            : <TableCreate 
-                                socket={this.state.socket} 
-                                changeInfo={this.changeInfo} 
-                                tableCode={this.state.tableCode} 
+                                : <TableCreate
+                                    socket={this.state.socket}
+                                    changeInfo={this.changeInfo}
+                                    tableCode={this.state.tableCode}
                                 />
                             : <p>Loading...</p>
                         }

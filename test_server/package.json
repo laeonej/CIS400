@@ -7,11 +7,14 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Parth Patel, myvs.parth@gmail.com",
+  "author": "Younghu Park, younghupark@gmail.com",
   "license": "ISC",
   "dependencies": {
     "engine.io-client": "^4.0.1",
     "http": "0.0.1-security",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.11.2"
   }
 }
