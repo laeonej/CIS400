@@ -293,8 +293,8 @@ function Table(props) {
 
     function buttonName(tgtName) {
         if (playerName === tgtName) {
-            return 'Add Friend'
             console.log(tgtName)
+            return 'Add Friend'
         } else if (hasFriendPending(playerName, tgtName)) {
             return 'Accept'
         } else {

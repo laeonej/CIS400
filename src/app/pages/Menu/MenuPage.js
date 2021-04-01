@@ -25,10 +25,13 @@ export class Menu extends React.Component {
             tableCode: null,
             playerName: null,
             players: null,
+            isGuest: true
         }
     }
 
     componentDidMount() {
+        this.setState({isGuest: this.props.isGuest})
+
         const { endpoint } = this.state;
         // Made a connection with server
         const socket = io(endpoint, { transports: ['websocket'] });
@@ -83,7 +86,7 @@ export class Menu extends React.Component {
     }
 
     async testing() {
-        console.log(await hasFriendPending('abc123', 'aaa'))
+        console.log(this.state.isGuest)
     }
 
     // setUser(user) {
@@ -110,6 +113,7 @@ export class Menu extends React.Component {
                                        changeInfo={this.changeInfo} 
                                        socket={this.state.socket} 
                                        playerName={this.state.playerName} 
+                                       isGuest={this.state.isGuest}
                                 />
                             : <TableCreate 
                                 socket={this.state.socket} 
@@ -125,8 +129,16 @@ export class Menu extends React.Component {
                     this.state.joinPage &&
                     <header className="App-header">
                         {this.state.socket ?
-                            this.state.tableCode ? <Table players={this.state.players} tableCode={this.state.tableCode} changeInfo={this.changeInfo} socket={this.state.socket} playerName={this.state.playerName} />
-                                : <TableJoin socket={this.state.socket} changeInfo={this.changeInfo} tableCode={this.state.tableCode} />
+                            this.state.tableCode ? <Table players={this.state.players} 
+                                                          tableCode={this.state.tableCode} 
+                                                          changeInfo={this.changeInfo} 
+                                                          socket={this.state.socket} 
+                                                          playerName={this.state.playerName} 
+                                                        />
+                                : <TableJoin 
+                                    socket={this.state.socket} 
+                                    changeInfo={this.changeInfo} 
+                                    tableCode={this.state.tableCode} />
                             : <p>Loading...</p>
                         }
                     </header>
