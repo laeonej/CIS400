@@ -48,7 +48,7 @@ export default function TableCreate(props) {
             setErrorMessage("Please enter a display name")
         // may want to check if name already exists
         } else {
-            props.makeGame()
+            props.makeGame(playerName)
         }
     }
 

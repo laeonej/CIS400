@@ -74,7 +74,7 @@ export default function TableJoin(props) {
                 <Button 
                     variant='contained'
                     color='primary'
-                    onClick={() => console.log('Join clicked')}
+                    onClick={props.joinBtn(tableCode, playerName)}
                 >
                     Join
                 </Button>

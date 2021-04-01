@@ -27,9 +27,12 @@ export const UserContext = createContext({ user: null })
 
 export default function UserProvider(props) {
     const [user, setUser] = useState(null)
+    const [lastAuth, setLastAuth] = useState(null)
 
     useEffect(() => {
         auth.onAuthStateChanged(async userAuth => {
+            if (lastAuth === userAuth) return
+            setLastAuth(userAuth)
             const user = await generateUserDocument(userAuth)
             setUser(user)
         })

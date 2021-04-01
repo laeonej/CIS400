@@ -172,6 +172,7 @@ import PlayerInfoCard from './PlayerInfoCard';
 // }
 
 function Table(props) {
+
     const user = useContext(UserContext)
     
     
@@ -184,16 +185,14 @@ function Table(props) {
     const [isGuest, setIsGuest] = useState(true)
     const [width, setWidth] = useState(0)
     const [height, setHeight] = useState(0)
-
-    let playerName = null
+    const [playerName, setPlayerName] = useState(props.playerName)
 
     useEffect(() => {
-
-        if(user !== null || user !== undefined) {
+        console.log(user)
+        if(user !== null && user !== undefined) {
             setIsGuest(false)
-            playerName = user.displayName
         }
-
+        console.log(playerName)
         updateDimensions()
         window.addEventListener('resize', updateDimensions);
         
@@ -233,14 +232,7 @@ function Table(props) {
     };
 
 
-    // may need fixing
-    function exitTable() {
-        props.socket.emit("exitTable", {
-            "tableCode": props.tableCode,
-            "playerName": props.playerName
-        })
-        props.changeInfo({ "tableCode": null, "playerName": null });
-    }
+    
 
     function handleFile(file) {
         //you can carry out any file validations here...
@@ -292,6 +284,9 @@ function Table(props) {
     }
 
     function buttonName(tgtName) {
+        console.log('buttonName called')
+        console.log('tgtName '+tgtName)
+        console.log(playerName)
         if (playerName === tgtName) {
             console.log(tgtName)
             return 'Add Friend'
@@ -360,7 +355,7 @@ function Table(props) {
 
                 <div style={{ position: "absolute", top: 300, left: 200 }}>{images}</div>
 
-                <Button onClick={exitTable} variant="primary" type="button">
+                <Button onClick={props.exit} variant="primary" type="button">
                     Exit
                 </Button>
             </div>

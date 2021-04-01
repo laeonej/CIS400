@@ -15,11 +15,9 @@ export default function SignUp(props) {
     const [existingUsers, setExistingUsers] = useState('')
     const [emailError, setEmailError] = useState(false)
 
-    useEffect(() => {
-        async function getUsers() {
-            return await firestore.collection('users').get()
-        }
-        const snapshot = getUsers()
+    useEffect(async () => {
+        const snapshot = await firestore.collection('users').get()
+        console.log(snapshot)
         const names = snapshot.docs.map(doc => doc.data().displayName.toLowerCase());
         setExistingUsers(names.sort())
     }, [])

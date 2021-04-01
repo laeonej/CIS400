@@ -30,10 +30,12 @@ export const firestore = firebase.firestore()
 // Sign up / Log in
 
 export const generateUserDocument = async user => {
-    console.log('generateUserDocument called')
+
     if (!user) {
+        console.log('generateUserDoc called but did not use firebase')
         return
     }
+    console.log('generateUserDocument called and used firebase read')
     const userRef = firestore.doc(`users/${user.displayName}`)
     const snapshot = await userRef.get();
     if (!snapshot.exists) {
@@ -104,8 +106,10 @@ export const removeFriend = async (srcName, tgtName) => {
 
 // checks if the src (you) have a request from tgt (them) 
 export const hasFriendPending = async (srcName, tgtName) => {
-
+    console.log('hasFriendPending called')
+    console.log('srcName = ' + srcName)
     const srcDoc = await firestore.collection('users').doc(srcName).get()
+    console.log('srcdoc ' + srcDoc)
     console.log(srcDoc.data().pending.includes(tgtName))
     return (srcDoc.data().pending.includes(tgtName))
 }
