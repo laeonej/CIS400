@@ -176,7 +176,7 @@ function Table(props) {
     const [images, setImages] = useState([])
     const [previewUrls, setPreviewUrls] = useState([])
     const [tableLeft, setTableLeft] = useState(0)
-    const [tableTop, setTableTop] = useState(0)
+    const [tableTop, setTableTop] = useState(200 + 200)
     const [open, setOpen] = useState([false, false, false, false]) // may change based on max players
     const [isGuest, setIsGuest] = useState(true)
     const [width, setWidth] = useState(0)
@@ -220,6 +220,8 @@ function Table(props) {
     function updateDimensions() {
         setWidth(window.innerWidth)
         setHeight(window.innerHeight)
+        setTableLeft(window.innerWidth * .25 + 250)
+        //setTableTop(window.innerHeight * .25)
         // console.log(ReactDOM.findDOMNode())
         // var rect = ReactDOM.findDOMNode(useRef.current).getBoundingClientRect();
         // setTableLeft(rect.left)
@@ -231,17 +233,18 @@ function Table(props) {
 
     function handleFile(file) {
         //you can carry out any file validations here...
-        const url = URL.createObjectURL(file)
+        //const url = URL.createObjectURL(file)
         const newImage = <Image
-            src={url}
+            src={file}
             tableCode={props.tableCode}
             socket={props.socket} />
 
         let currImage = images
         currImage.push(newImage)
         setImages(currImage)
+        console.log(file)
         props.socket.emit("addImage", {
-            src: url,
+            src: file,
             tableCode: props.tableCode
         })
 
@@ -259,6 +262,7 @@ function Table(props) {
         event.stopPropagation();
         //let's grab the image file
         let imageFile = event.dataTransfer.files[0];
+        console.log(event.dataTransfer);
         handleFile(imageFile);
     }
 
@@ -296,7 +300,8 @@ function Table(props) {
         <div id="table " className="wrapper" onDragOver={handleDragOver} onDrop={handleDrop}>
             <div style={{
                 backgroundColor: 'green', height: 400, width: 500,
-                borderStyle: 'solid', borderWidth: 2, borderColor: 'black'
+                borderStyle: 'solid', borderWidth: 2, borderColor: 'black',
+                marginLeft: '25%', marginTop: 220
             }}>
                 <Deck tableTop={tableTop} tableLeft={tableLeft} tableCode={props.tableCode} socket={props.socket} playerName={playerName} />
 
