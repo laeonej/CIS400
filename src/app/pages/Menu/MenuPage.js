@@ -14,21 +14,25 @@ export default function Menu(props) {
     const [menu, setMenu] = useState(true)
     const [createPage, setCreatePage] = useState(false)
     const [joinPage, setJoinPage] = useState(false)
-    const [endPoint, setEndPoint] = useState("https://apricot-shortcake-33947.herokuapp.com/")
+    const [endPoint, setEndPoint] = useState("http://localhost:5000")
     const [socket, setSocket] = useState(null)
     const [inGame, setInGame] = useState(false)
-    const [tableCode, setTableCode] = useState(null)
+    const [tableCode, setTableCode] = useState('AAAA11')
     const [players, setPlayers] = useState(null)
     const [playerName, setPlayerName] = useState(null)
     const [isGuest, setIsGuest] = useState(true)
+    const [test, setTest] = useState('not working')
 
-    useEffect(() => {
+    useEffect(async () => {
         // componentDidmount
         const socket = io(endPoint, { transports: ['websocket'] })
         socket.on("connected", data => {
             setSocket(socket)
-            console.log(data)
             //updateAnalytics({ "id": data.id, "type": "numConnections" })
+        })
+
+        socket.on('confirmCreateTable', async (data) => {
+            confirmCreateTableChangeInfo(data)
         })
 
         if (user !== null && user !== undefined) {
@@ -36,23 +40,31 @@ export default function Menu(props) {
             setIsGuest(false)
         }
 
+        socket.on("confirmNewPlayer", data => {
+            if (data.tableCode === tableCode) {
+                setPlayers(data.players)
 
+            }
+        });
         return () => {
             // componentWillUnmount
-            console.log('Component Unmounted')
             //updateAnalytics({ "type": "numDisconnections" })
         }
     }, [])
 
-    async function createGame(enteredPlayerName) {
-        console.log("createGame called by " + enteredPlayerName)
+    function confirmCreateTableChangeInfo(data) {
+
+        setTableCode(data.tableCode)
+        setPlayers(data.players)
+    }
+
+    function createGame(enteredPlayerName) {
         setPlayerName(enteredPlayerName)
-        await socket.emit('createTable', { 'playerName': enteredPlayerName })
+        socket.emit('createTable', { 'playerName': enteredPlayerName })
         updateAnalytics({ "type": "numTablesCreated" })
-        await socket.on('confirmCreateTable', data => {
-            setTableCode(data.tableCode)
-            setPlayers(data.players)
-        })
+
+        console.log(tableCode)
+        console.log(players)
         setCreatePage(false)
         setInGame(true)
     }

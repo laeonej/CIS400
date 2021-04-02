@@ -175,8 +175,8 @@ function Table(props) {
     // states
     const [images, setImages] = useState([])
     const [previewUrls, setPreviewUrls] = useState([])
-    const [tableLeft, setTableLeft] = useState(200)
-    const [tableTop, setTableTop] = useState(300)
+    const [tableLeft, setTableLeft] = useState(0)
+    const [tableTop, setTableTop] = useState(0)
     const [open, setOpen] = useState([false, false, false, false]) // may change based on max players
     const [isGuest, setIsGuest] = useState(true)
     const [width, setWidth] = useState(0)
@@ -184,11 +184,10 @@ function Table(props) {
     const [playerName, setPlayerName] = useState(props.playerName)
 
     useEffect(() => {
-        console.log(user)
+
         if (user !== null && user !== undefined) {
             setIsGuest(false)
         }
-        console.log(playerName)
         updateDimensions()
         window.addEventListener('resize', updateDimensions);
 
@@ -283,11 +282,8 @@ function Table(props) {
         if (isGuest) {
             return 'Add Friend';
         }
-        console.log('buttonName called')
-        console.log('tgtName ' + tgtName)
-        console.log(playerName)
         if (playerName === tgtName) {
-            console.log(tgtName)
+
             return 'Add Friend'
         } else if (hasFriendPending(playerName, tgtName)) {
             return 'Accept'
