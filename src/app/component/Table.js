@@ -58,10 +58,6 @@ import PlayerInfoCard from './PlayerInfoCard';
 //     }
 
 
-
-
-
-
 //     updateDimensions = () => {
 //         this.setState({ width: window.innerWidth, height: window.innerHeight });
 //         var rect = ReactDOM.findDOMNode(this).getBoundingClientRect();

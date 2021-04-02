@@ -14,7 +14,7 @@ export default function Menu(props) {
     const [menu, setMenu] = useState(true)
     const [createPage, setCreatePage] = useState(false)
     const [joinPage, setJoinPage] = useState(false)
-    const [endPoint, setEndPoint] = useState("http://localhost:5000")
+    const [endPoint, setEndPoint] = useState("https://apricot-shortcake-33947.herokuapp.com/")
     const [socket, setSocket] = useState(null)
     const [inGame, setInGame] = useState(false)
     const [tableCode, setTableCode] = useState(null)
