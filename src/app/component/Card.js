@@ -150,8 +150,9 @@ export default class Card extends React.Component {
     }
 
     inBounds = () => {
-        return (this.props.cardData[this.props.cardId].posX > -450 && this.props.cardData[this.props.cardId].posX < 0 &&
-            this.props.cardData[this.props.cardId].posY > 0 && this.props.cardData[this.props.cardId].posY < 400)
+        return (this.props.cardData[this.props.cardId].posX > 0 && this.props.cardData[this.props.cardId].posX + cardWidth < 500 &&
+            this.props.cardData[this.props.cardId].posY > 0 && this.props.cardData[this.props.cardId].posY + cardHeight < 400)
+
     }
 
     componentDidUpdate(prevProps) {

@@ -1,175 +1,142 @@
-import React from "react";
-import Buttons from '../../component/Button';
-import MenuBar from './MenuComponents/MenuBar';
-import Table from '../../component/Table';
-import { Grid } from '@material-ui/core'
-import TableCreate from './MenuComponents/TableCreate';
-import TableJoin from './MenuComponents/TableJoin';
-import io from "socket.io-client";
+import React, { useContext, useEffect, useState } from 'react'
+import MainMenu from './MenuComponents/MainMenu'
+import TableCreate from './MenuComponents/TableCreate'
+import TableJoin from './MenuComponents/TableJoin'
+import Table from '../../component/Table'
 import { updateAnalytics, hasFriendPending } from '../../firebase.js'
+import io from "socket.io-client";
+import { UserContext } from '../../../provider/UserProvider'
 
-export class Menu extends React.Component {
-    constructor(props) {
-        super(props)
-        this.handleJoinClick = this.handleJoinClick.bind(this);
-        this.handleCreateRoomClick = this.handleCreateClick.bind(this);
-        this.state = {
-            joinPage: false,
-            createPage: false,
-            menu: true,
-            endpoint: "http://3.142.54.184",
-            socket: null,
-            isGameStarted: false,
-            gameId: null,
-            gameData: null,
-            tableCode: null,
-            playerName: null,
-            players: null,
-            isGuest: true
-        }
-    }
+export default function Menu(props) {
 
-    componentDidMount() {
-        this.setState({isGuest: this.props.isGuest})
+    const user = useContext(UserContext)
 
-        const { endpoint } = this.state;
-        // Made a connection with server
-        const socket = io(endpoint, { transports: ['websocket'] });
+    const [menu, setMenu] = useState(true)
+    const [createPage, setCreatePage] = useState(false)
+    const [joinPage, setJoinPage] = useState(false)
+    const [endPoint, setEndPoint] = useState("https://apricot-shortcake-33947.herokuapp.com/")
+    const [socket, setSocket] = useState(null)
+    const [inGame, setInGame] = useState(false)
+    const [tableCode, setTableCode] = useState(null)
+    const [players, setPlayers] = useState(null)
+    const [playerName, setPlayerName] = useState(null)
+    const [isGuest, setIsGuest] = useState(true)
+
+    useEffect(() => {
+        // componentDidmount
+        const socket = io(endPoint, { transports: ['websocket'] })
         socket.on("connected", data => {
-            this.setState({ socket: socket });
-            updateAnalytics({ "id": data.id, "type": "numConnections" })
-        });
+            setSocket(socket)
+            console.log(data)
+            //updateAnalytics({ "id": data.id, "type": "numConnections" })
+        })
 
-        socket.on("confirmNewPlayer", data => {
-            if (data.tableCode === this.state.tableCode) {
-                this.setState({ players: data.players });
-                this.setState({ playerName: data.playerName });
+        if (user !== null && user !== undefined) {
+            setPlayerName(user.displayName)
+            setIsGuest(false)
+        }
+
+
+        return () => {
+            // componentWillUnmount
+            console.log('Component Unmounted')
+            //updateAnalytics({ "type": "numDisconnections" })
+        }
+    }, [])
+
+    async function createGame(enteredPlayerName) {
+        console.log("createGame called by " + enteredPlayerName)
+        setPlayerName(enteredPlayerName)
+        await socket.emit('createTable', { 'playerName': enteredPlayerName })
+        updateAnalytics({ "type": "numTablesCreated" })
+        await socket.on('confirmCreateTable', data => {
+            setTableCode(data.tableCode)
+            setPlayers(data.players)
+        })
+        setCreatePage(false)
+        setInGame(true)
+    }
+
+    // may need fixing
+    function exitTable() {
+        console.log('exitTable() called')
+        socket.emit("exitTable", {
+            "tableCode": tableCode,
+            "playerName": playerName
+        })
+        setTableCode(null)
+        setPlayerName(null)
+    }
+
+    async function joinGame(enteredTableCode, enteredPlayerName) {
+        console.log("joinGame called")
+        await socket.emit('joinTable', { "tableCode": enteredTableCode, "playerName": enteredPlayerName })
+        await socket.on('confirmJoinTable', data => {
+            if (data.flag) {
+                setTableCode(enteredTableCode)
+                setPlayerName(enteredPlayerName)
+                setPlayers(data.players)
+                updateAnalytics({ "type": "numTablesJoined" })
+            } else {
+                alert("No Lobby");
             }
-        });
-
-
+        })
+        setJoinPage(false)
+        setInGame(true)
     }
 
-    componentWillUnmount() {
-        updateAnalytics({ "type": "numDisconnections" })
-    }
-    // registrationConfirmation = (data) => {
-    //     // If registration successfully redirect to player list
-    //     this.setState({ isRegistered: data });
-    // };
-    // gameStartConfirmation = (data) => {
-    //     // If select opponent player then start game and redirect to game play
-    //     this.setState({ isGameStarted: data.status, gameId: data.game_id, gameData: data.game_data });
-    // };
-    // opponentLeft = (data) => {
-    //     // If opponent left then get back from game play to player screen
-    //     alert("Opponent Left");
-    //     this.setState({ isGameStarted: false, gameId: null, gameData: null });
-    // };
-
-    changeInfo = (data) => {
-        this.setState({ playerName: data.playerName });
-        this.setState({ players: data.players });
-        this.setState({ tableCode: data.tableCode });
-
-        console.log("making table: " + this.state.playerName)
+    function handleCreateClick() {
+        setMenu(false)
+        setCreatePage(true)
     }
 
-    handleCreateClick() {
-        this.setState({ menu: false })
-        this.setState({ createPage: true })
+    function handleJoinClick() {
+        setMenu(false)
+        setJoinPage(true)
     }
 
-    handleJoinClick() {
-        this.setState({ menu: false })
-        this.setState({ joinPage: true })
+    function handleBackClick() {
+        setJoinPage(false)
+        setCreatePage(false)
+        setMenu(true)
     }
 
-    async testing() {
-        console.log(this.state.isGuest)
-    }
+    return (
+        <div>
+            {
+                menu &&
+                <MainMenu
+                    onJoinClick={handleJoinClick}
+                    onCreateRoomClick={handleCreateClick}
+                />
+            }
+            {
+                createPage &&
+                <TableCreate
+                    onBackClick={handleBackClick}
+                    makeGame={createGame}
+                />
+            }
+            {
+                joinPage &&
+                <TableJoin
+                    onBackClick={handleBackClick}
+                    joinBtn={joinGame}
+                />
+            }
+            {
+                inGame &&
+                <Table
+                    players={players}
+                    tableCode={tableCode}
+                    socket={socket}
+                    playerName={playerName}
+                    isGuest={isGuest}
+                    exit={exitTable}
+                />
+            }
+        </div>
+    )
 
-    // setUser(user) {
-    //     if (user != null) {
-    //         this.setState({ playerName: user.displayName });
-    //     }
-    // }
-
-    render() {
-        return (
-            <div>
-                <MainMenu bool={this.state.menu}
-                    onJoinClick={this.handleJoinClick}
-                    onCreateRoomClick={this.handleCreateRoomClick}
-                    testing={this.testing} />
-                {/* renders when you click create */}
-                {
-                    this.state.createPage &&
-                    <header className="App-header">
-                        {this.state.socket ?
-                            this.state.tableCode ?
-                                <Table players={this.state.players}
-                                    tableCode={this.state.tableCode}
-                                    changeInfo={this.changeInfo}
-                                    socket={this.state.socket}
-                                    playerName={this.state.playerName}
-                                />
-                                : <TableCreate
-                                    socket={this.state.socket}
-                                    changeInfo={this.changeInfo}
-                                    tableCode={this.state.tableCode}
-                                />
-                            : <p>Loading...</p>
-                        }
-                    </header>
-                }
-                {/* renders when you click join */}
-                {
-                    this.state.joinPage &&
-                    <header className="App-header">
-                        {this.state.socket ?
-                            this.state.tableCode ? <Table players={this.state.players} 
-                                                          tableCode={this.state.tableCode} 
-                                                          changeInfo={this.changeInfo} 
-                                                          socket={this.state.socket} 
-                                                          playerName={this.state.playerName} 
-                                                        />
-                                : <TableJoin 
-                                    socket={this.state.socket} 
-                                    changeInfo={this.changeInfo} 
-                                    tableCode={this.state.tableCode} />
-                            : <p>Loading...</p>
-                        }
-                    </header>
-                }
-            </div >
-
-        )
-    }
-}
-
-function MainMenu(props) {
-    const x = props.bool
-
-    if (x) {
-        return (<>
-            <MenuBar />
-            <div flex-grow={1}>
-                <Grid container spacing={10} justify='center'>
-                    <Grid item >
-                        <Buttons function={props.onJoinClick} text='Join' />
-                    </Grid>
-                    <Grid item >
-                        <Buttons function={props.onCreateRoomClick} text='Create Room' />
-                    </Grid>
-                    <Grid item >
-                        <Buttons function={props.testing} text='test function' />
-                    </Grid>
-                </Grid>
-            </div>
-        </>);
-    } else {
-        return (null)
-    }
 }
 

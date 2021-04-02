@@ -13,12 +13,29 @@ var firebaseConfig = {
     measurementId: "G-946CMWHSJL"
 };
 
+// var firebaseConfig = {
+//     apiKey: "AIzaSyByxFvo-zs4UVPrdSuvzPfiLLyPAuNk_tI",
+//     authDomain: "cis400-test.firebaseapp.com",
+//     projectId: "cis400-test",
+//     storageBucket: "cis400-test.appspot.com",
+//     messagingSenderId: "265973472729",
+//     appId: "1:265973472729:web:15120815f387a828f60dc8",
+//     measurementId: "G-EP7BV7V380"
+//   };
+
 firebase.initializeApp(firebaseConfig)
 export const auth = firebase.auth()
 export const firestore = firebase.firestore()
 
+// Sign up / Log in
+
 export const generateUserDocument = async user => {
-    if (!user) return
+
+    if (!user) {
+        console.log('generateUserDoc called but did not use firebase')
+        return
+    }
+    console.log('generateUserDocument called and used firebase read')
     const userRef = firestore.doc(`users/${user.displayName}`)
     const snapshot = await userRef.get();
     if (!snapshot.exists) {
@@ -40,8 +57,6 @@ export const generateUserDocument = async user => {
 
     return getUserDoc(user.displayName)
 }
-
-
 
 
 export const getUserStats = async playerName => {
@@ -91,14 +106,17 @@ export const removeFriend = async (srcName, tgtName) => {
 
 // checks if the src (you) have a request from tgt (them) 
 export const hasFriendPending = async (srcName, tgtName) => {
-
+    console.log('hasFriendPending called')
+    console.log('srcName = ' + srcName)
     const srcDoc = await firestore.collection('users').doc(srcName).get()
+    console.log('srcdoc ' + srcDoc)
     console.log(srcDoc.data().pending.includes(tgtName))
     return (srcDoc.data().pending.includes(tgtName))
 }
 
 
 const getUserDoc = async displayName => {
+    console.log('getUserDoc called')
     if (!displayName) return null
     try {
         const userDoc = await firestore.collection('users').doc(displayName).get()
@@ -145,6 +163,7 @@ const getDate = async names => {
 
 }
 export const updateAnalytics = async user => {
+    console.log('updateAnalytics called')
     if (!user) return
     if (!user.type) return
 
