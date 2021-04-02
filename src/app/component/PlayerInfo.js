@@ -8,14 +8,16 @@ export default class PlayerInfo extends React.Component {
 
         this.state = {
             playername: this.props.name,
-            wins: -1,
-            loses: -1,
+            wins: 0,
+            loses: 0,
         }
     }
 
     async componentDidMount() {
         const data = await getUserStats(this.state.playername)
-        this.setState({wins: data.wins, loses:data.loses})
+        if (data) {
+            this.setState({ wins: data.wins, loses: data.loses })
+        }
     }
 
     render() {

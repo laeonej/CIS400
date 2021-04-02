@@ -60,7 +60,7 @@ export const generateUserDocument = async user => {
 
 
 export const getUserStats = async playerName => {
-    if (!playerName) return
+    if (!playerName) return;
     const userDoc = await firestore.collection('users').doc(playerName).get()
     return (
         userDoc.data()
@@ -92,16 +92,16 @@ export const acceptFriend = async (srcName, tgtName) => {
 
     await srcUserRef.update({ friends: firebase.firestore.FieldValue.arrayUnion(tgtName) })
     await tgtUserRef.update({ friends: firebase.firestore.FieldValue.arrayUnion(srcName) })
-    await srcUserRef.update({ pending: firebase.firestore.FieldValue.arrayRemove(tgtName)})
-    await tgtUserRef.update({ requested: firebase.firestore.FieldValue.arrayRemove(srcName)})
+    await srcUserRef.update({ pending: firebase.firestore.FieldValue.arrayRemove(tgtName) })
+    await tgtUserRef.update({ requested: firebase.firestore.FieldValue.arrayRemove(srcName) })
 }
 
 export const removeFriend = async (srcName, tgtName) => {
     const srcUserRef = firestore.collection('users').doc(srcName)
     const tgtUserRef = firestore.collection('users').doc(tgtName)
 
-    await srcUserRef.update({ friends: firebase.firestore.FieldValue.arrayRemove(tgtName)})
-    await srcUserRef.update({ friends: firebase.firestore.FieldValue.arrayRemove(srcName)})
+    await srcUserRef.update({ friends: firebase.firestore.FieldValue.arrayRemove(tgtName) })
+    await srcUserRef.update({ friends: firebase.firestore.FieldValue.arrayRemove(srcName) })
 }
 
 // checks if the src (you) have a request from tgt (them) 

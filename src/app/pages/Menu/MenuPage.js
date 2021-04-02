@@ -14,7 +14,7 @@ export default function Menu(props) {
     const [menu, setMenu] = useState(true)
     const [createPage, setCreatePage] = useState(false)
     const [joinPage, setJoinPage] = useState(false)
-    const [endPoint, setEndPoint] = useState("https://apricot-shortcake-33947.herokuapp.com/")
+    const [endPoint, setEndPoint] = useState("http://localhost:5000")
     const [socket, setSocket] = useState(null)
     const [inGame, setInGame] = useState(false)
     const [tableCode, setTableCode] = useState(null)
@@ -66,6 +66,8 @@ export default function Menu(props) {
         })
         setTableCode(null)
         setPlayerName(null)
+        setInGame(false)
+        setMenu(true)
     }
 
     async function joinGame(enteredTableCode, enteredPlayerName) {
@@ -77,12 +79,12 @@ export default function Menu(props) {
                 setPlayerName(enteredPlayerName)
                 setPlayers(data.players)
                 updateAnalytics({ "type": "numTablesJoined" })
+                setJoinPage(false)
+                setInGame(true)
             } else {
                 alert("No Lobby");
             }
         })
-        setJoinPage(false)
-        setInGame(true)
     }
 
     function handleCreateClick() {

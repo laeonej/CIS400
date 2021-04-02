@@ -12,7 +12,7 @@ const useStyles = makeStyles(
             color: 'white',
             height: 48,
             padding: '0 30px',
-          },
+        },
     }
 )
 
@@ -23,16 +23,16 @@ export default function MainMenu(props) {
 
     return (
         <div>
-            <MenuBar/>
-            <div 
+            <MenuBar />
+            <div
                 flex-grow={1}
             >
                 <Grid
-                    container 
-                    spacing={10} 
+                    container
+                    spacing={10}
                     justify='center'
                 >
-                    <Grid 
+                    <Grid
                         item
                     >
                         <Button
@@ -45,21 +45,11 @@ export default function MainMenu(props) {
                     <Grid
                         item
                     >
-                        <Button 
+                        <Button
                             onClick={props.onCreateRoomClick}
                             className={classes.btn}
                         >
                             Create Room
-                        </Button>
-                    </Grid>
-                    <Grid
-                        item
-                    >
-                        <Button 
-                            onClick={props.testing}
-                            className={classes.btn}
-                        >
-                            Test Function
                         </Button>
                     </Grid>
                 </Grid>

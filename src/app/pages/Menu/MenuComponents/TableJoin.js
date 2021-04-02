@@ -31,7 +31,7 @@ export default function TableJoin(props) {
             setIsGuest(false)
         }
 
-    },[props, user, playerName])
+    }, [props, user, playerName])
 
     function onPlayerNameChange(e) {
         setPlayerName(e.target.value)
@@ -43,8 +43,8 @@ export default function TableJoin(props) {
 
     return (
         <div>
-            <MenuBar/>
-            <div style={{textAlign: 'center'}}>
+            <MenuBar />
+            <div style={{ textAlign: 'center' }}>
                 <form
                     noValidate
                     autoComplete='off'
@@ -52,7 +52,7 @@ export default function TableJoin(props) {
                     <h1>
                         Enter Display Name
                     </h1>
-                    <TextField 
+                    <TextField
                         id="outlined-basic"
                         label="Name"
                         variant="outlined"
@@ -63,7 +63,7 @@ export default function TableJoin(props) {
                     <h1>
                         Enter Lobby Code
                     </h1>
-                    <TextField 
+                    <TextField
                         id="outlined-basic"
                         label="Lobby Code"
                         variant="outlined"
@@ -71,14 +71,14 @@ export default function TableJoin(props) {
                         value={tableCode}
                     />
                 </form>
-                <Button 
+                <Button
                     variant='contained'
                     color='primary'
-                    onClick={props.joinBtn(tableCode, playerName)}
+                    onClick={() => props.joinBtn(tableCode, playerName)}
                 >
                     Join
                 </Button>
-                <Button 
+                <Button
                     className={classes.backBtn}
                     variant='outlined'
                     color='secondary'

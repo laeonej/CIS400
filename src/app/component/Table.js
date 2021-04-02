@@ -26,7 +26,7 @@ import PlayerInfoCard from './PlayerInfoCard';
 //         }
 //     }
 
-    
+
 
 //     handlePlayerMenuOpen(index) {
 //         let temp = this.state.open;
@@ -58,7 +58,7 @@ import PlayerInfoCard from './PlayerInfoCard';
 //     }
 
 
-    
+
 
 
 
@@ -111,7 +111,7 @@ import PlayerInfoCard from './PlayerInfoCard';
 //         console.log('Send invite called')
 //         sendRequest(this.state.currPlayer, tgtName)
 //     }
-    
+
 //     render() {
 //         return (
 //             <div id="table " className="wrapper" onDragOver={this.handleDragOver} onDrop={this.handleDrop}>
@@ -174,8 +174,8 @@ import PlayerInfoCard from './PlayerInfoCard';
 function Table(props) {
 
     const user = useContext(UserContext)
-    
-    
+
+
     // states
     const [images, setImages] = useState([])
     const [previewUrls, setPreviewUrls] = useState([])
@@ -189,13 +189,13 @@ function Table(props) {
 
     useEffect(() => {
         console.log(user)
-        if(user !== null && user !== undefined) {
+        if (user !== null && user !== undefined) {
             setIsGuest(false)
         }
         console.log(playerName)
         updateDimensions()
         window.addEventListener('resize', updateDimensions);
-        
+
         props.socket.on('confirmAddImage', data => {
             if (data.tableCode === props.tableCode) {
                 const newImage = <Image src={data.src}
@@ -206,7 +206,7 @@ function Table(props) {
                 setImages(currImage)
             }
         })
-    },[props, images])
+    }, [props, images])
 
     function handlePlayerMenuOpen(index) {
         console.log('opened')
@@ -232,7 +232,7 @@ function Table(props) {
     };
 
 
-    
+
 
     function handleFile(file) {
         //you can carry out any file validations here...
@@ -241,7 +241,7 @@ function Table(props) {
             src={url}
             tableCode={props.tableCode}
             socket={props.socket} />
-        
+
         let currImage = images
         currImage.push(newImage)
         setImages(currImage)
@@ -280,12 +280,15 @@ function Table(props) {
             // are you sure (implement later)
             //remove friend
             removeFriend(playerName, tgtName)
-        }       
+        }
     }
 
     function buttonName(tgtName) {
+        if (isGuest) {
+            return 'Add Friend';
+        }
         console.log('buttonName called')
-        console.log('tgtName '+tgtName)
+        console.log('tgtName ' + tgtName)
         console.log(playerName)
         if (playerName === tgtName) {
             console.log(tgtName)
