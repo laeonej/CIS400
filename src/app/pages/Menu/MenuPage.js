@@ -14,7 +14,8 @@ export default function Menu(props) {
     const [menu, setMenu] = useState(true)
     const [createPage, setCreatePage] = useState(false)
     const [joinPage, setJoinPage] = useState(false)
-    const [endPoint, setEndPoint] = useState("https://apricot-shortcake-33947.herokuapp.com/")
+    const [endPoint, setEndPoint] = useState("http://localhost:5000")
+    // const [endPoint, setEndPoint] = useState("https://apricot-shortcake-33947.herokuapp.com/")
     const [thisSocket, setThisSocket] = useState(null)
     const [inGame, setInGame] = useState(false)
     const [tableCode, setTableCode] = useState('AAAA11')
@@ -27,29 +28,35 @@ export default function Menu(props) {
 
     useEffect(async () => {
         // componentDidmount
-
+       
         if (user !== null && user !== undefined) {
             setPlayerName(user.displayName)
             setIsGuest(false)
+            thisSocket.emit('updateConnectedPlayersName', { 'playerName': playerName, 'isGuest' : false} )
         }
+
+        
 
         var socket = thisSocket
         if (thisSocket == null) {
-            socket = io(endPoint, { transports: ['websocket'] })
+            socket = io(endPoint, { transports: ['websocket'], playerName: playerName})
         }
+
         
 
         socket.on("connected", data => {
-            console.log('new socket')
             setThisSocket(socket)
             //updateAnalytics({ "id": data.id, "type": "numConnections" })
         })
+
+        
 
         socket.on('confirmCreateTable', data => {
             setTableCode(data.tableCode)
             setPlayers(data.players)
             setCreatePage(false)
             setInGame(true)
+            socket.emit('updateConnectedPlayersName', { 'playerName': playerName, 'isGuest': isGuest })
         })
 
         socket.on("confirmNewPlayer", data => {
@@ -63,12 +70,15 @@ export default function Menu(props) {
             //updateAnalytics({ "type": "numDisconnections" })
 
         }
-    }, [tableCode])
+    }, [tableCode, playerName, user])
 
 
-    function createGame(enteredPlayerName) {
-        setPlayerName(enteredPlayerName)
+    async function createGame(enteredPlayerName) {
+        console.log('creating!!!!')
+        console.log(enteredPlayerName)
+        await setPlayerName(enteredPlayerName)
         thisSocket.emit('createTable', { 'playerName': enteredPlayerName })
+        
         updateAnalytics({ "type": "numTablesCreated" })
     }
 
@@ -77,7 +87,8 @@ export default function Menu(props) {
         console.log('exitTable() called')
         thisSocket.emit("exitTable", {
             "tableCode": tableCode,
-            "playerName": playerName
+            "playerName": playerName,
+            "isGuest" : isGuest,
         })
         setTableCode(null)
         setPlayerName(null)
@@ -92,6 +103,7 @@ export default function Menu(props) {
             if (data.flag) {
                 setTableCode(enteredTableCode)
                 setPlayerName(enteredPlayerName)
+                thisSocket.emit('updateConnectedPlayersName', { 'playerName': enteredPlayerName, 'isGuest': isGuest})
                 setPlayers(data.players)
                 updateAnalytics({ "type": "numTablesJoined" })
                 setJoinPage(false)
