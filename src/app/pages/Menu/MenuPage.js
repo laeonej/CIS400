@@ -146,6 +146,7 @@ export default function Menu(props) {
             {
                 joinPage &&
                 <TableJoin
+                    socket={thisSocket}
                     onBackClick={handleBackClick}
                     joinBtn={joinGame}
                 />
