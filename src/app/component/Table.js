@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react'
 import Deck from './Deck';
 import Image from './Image'
+import Chat from './Chat'
 import ReactDOM from 'react-dom';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import PlayerInfo from './PlayerInfo.js';
@@ -183,6 +184,7 @@ function Table(props) {
     const [height, setHeight] = useState(0)
     const [playerName, setPlayerName] = useState(props.playerName)
 
+
     useEffect(() => {
 
         if (user !== null && user !== undefined) {
@@ -203,6 +205,7 @@ function Table(props) {
         })
     }, [props, images])
 
+
     function handlePlayerMenuOpen(index) {
         console.log('opened')
         let temp = open
@@ -220,7 +223,7 @@ function Table(props) {
     function updateDimensions() {
         setWidth(window.innerWidth)
         setHeight(window.innerHeight)
-        setTableLeft(window.innerWidth * .25 + 250)
+        setTableLeft(window.innerWidth * .25 + 250) //this recenters the position of the deck
         //setTableTop(window.innerHeight * .25)
         // console.log(ReactDOM.findDOMNode())
         // var rect = ReactDOM.findDOMNode(useRef.current).getBoundingClientRect();
@@ -359,7 +362,9 @@ function Table(props) {
                     Exit
                 </Button>
             </div>
+            <Chat playerName={playerName} />
         </div >
+
     );
 
 }

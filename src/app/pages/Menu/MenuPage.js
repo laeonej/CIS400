@@ -43,7 +43,6 @@ export default function Menu(props) {
         socket.on("confirmNewPlayer", data => {
             if (data.tableCode === tableCode) {
                 setPlayers(data.players)
-
             }
         });
         return () => {
