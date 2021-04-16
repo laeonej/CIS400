@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 //import the css here
 
 export const Chat = (props) => {
@@ -17,8 +17,20 @@ export const Chat = (props) => {
     }
 
     const handleSend = e => {
-        setMessages(messages.concat(textRef.current.value))
+        let msg = textRef.current.value
+        props.socket.emit("messageOutgoing", {
+            playerName: props.playerName,
+            msg: msg
+        })
+        setMessages(messages.concat({ playerName: props.playerName, msg: msg }))
+
     }
+
+    useEffect(() => {
+        props.socket.on('messageIncoming', data => {
+            setMessages(messages.concat({ playerName: data.playerName, msg: data.msg }))
+        }, [props])
+    })
 
     return (
         <div id='chatCon'>
@@ -27,15 +39,14 @@ export const Chat = (props) => {
                 <div class="msg-area">
                     {
                         messages.map((msg, i) => (
-                            i % 2 ? (
+                            msg.playerName == props.playerName ? (
                                 <div>
-                                    <p class="right"><span>{msg}</span></p>
+                                    <p class="right"><span>{msg.msg}</span></p>
                                 </div>
                             ) : (
                                 <div>
-                                    <p>{props.playerName}</p>
-
-                                    <p class="left"><span>{msg}</span></p>
+                                    <p>{msg.playerName}</p>
+                                    <p class="left"><span>{msg.msg}</span></p>
                                 </div>
                             )
                         ))

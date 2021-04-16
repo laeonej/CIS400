@@ -377,7 +377,7 @@ function Table(props) {
                 </div>} */}
                     <div style={{ position: "absolute", top: 300, left: 200 }}>{images}</div>
                 </div>
-                <Chat playerName={playerName} />
+                <Chat socket={props.socket} playerName={playerName} />
             </div >
         </div >
     );

@@ -14,11 +14,14 @@ const useStyles = makeStyles((theme) => ({
         flex: 1,
     },
     titleLink: {
+        fontFamily: 'Comfortaa',
+
         fontSize: 36,
         color: '#535559',
     },
     otherLinks: {
         fontSize: 20,
+        fontFamily: 'Comfortaa',
         color: '#535559',
         marginLeft: '30px'
     },
@@ -27,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
     },
     username: {
         fontSize: 30,
+        fontFamily: 'Comfortaa',
         color: '#282e3b',
     }
 }));

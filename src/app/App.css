@@ -146,7 +146,7 @@ h2 {
 }
 
 #chatCon {
-  width: 20%;
+  width: 400;
   position: absolute;
   bottom: 3%;
   right: 3%;
@@ -156,14 +156,14 @@ h2 {
   /* display: none; */
   width: 100%;
   height: 500px;
-  border-radius: 25px;
+  border-radius: 10px;
   background-color: #eee;
 }
 
 #chatCon .chat-box .header {
   background-color: #3fda73;
   padding: 15px;
-  border-radius: 20px 20px 0 0;
+  border-radius: 10px 10px 0 0;
   color: #fff;
   font-size: 20px;
 }
@@ -188,7 +188,7 @@ h2 {
 #chatCon .chat-box .msg-area .left span {
   display: inline-block;
   font-size: 17.5px;
-  border-radius: 15px;
+  border-radius: 10px;
   padding: 15px;
   background-color: #ddd;
 }
@@ -245,5 +245,5 @@ h2 {
 
 #chatCon .pop img {
   border-radius: 50%;
-  width: 25%;
+  width: 50;
 }
