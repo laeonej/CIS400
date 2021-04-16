@@ -1,5 +1,5 @@
 import React from 'react'
-import { makeStyles, ListItem, Button, ListItemSecondaryAction, ListItemText  } from '@material-ui/core'
+import { makeStyles, ListItem, Button, ListItemSecondaryAction, ListItemText } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -18,10 +18,11 @@ export function LobbyListItem(props) {
 
 
     return (
+
         <>
             <ListItem className={classes.root} divider={true}>
-                <ListItemText primary={tableCode} 
-                                secondary={"Players: " + numPlayers + " Gamemode: " + gamemode}/>
+                <ListItemText primary={props.isPrivate ? "" : tableCode}
+                    secondary={"Players: " + numPlayers + " Gamemode: " + gamemode} />
                 <ListItemSecondaryAction>
                     <Button disabled={props.isPrivate} color='primary' variant='contained' onClick={() => props.join(tableCode)}>
                         {props.isPrivate ? 'Private' : 'Join'}

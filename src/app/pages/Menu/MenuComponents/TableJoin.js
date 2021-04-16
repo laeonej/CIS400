@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../../../../provider/UserProvider'
 import MenuBar from './MenuBar'
-import { Button, 
-        makeStyles, 
-        TextField, 
-        Grid, 
-        ListItem,
-        ListItemSecondaryAction,
-        ListItemText,
-        List } from '@material-ui/core'
+import {
+    Button,
+    makeStyles,
+    TextField,
+    Grid,
+    ListItem,
+    ListItemSecondaryAction,
+    ListItemText,
+    List
+} from '@material-ui/core'
 import { LobbyListItem } from '../../../component/LobbyListItem'
 
 
@@ -130,11 +132,11 @@ export default function TableJoin(props) {
                     <List className={classes.lobbyList}>
                         {lobby.map(table => (
                             <LobbyListItem
-                                numPlayers = {table.players.length}
-                                tableCode = {table.code}
-                                gamemode = {table.mode}
-                                isPrivate = {table.isPrivate}
-                                join = {joinLobby}
+                                numPlayers={table.players.length}
+                                tableCode={table.code}
+                                gamemode={table.mode}
+                                isPrivate={table.isPrivate}
+                                join={joinLobby}
                             />
                         ))}
                     </List>
