@@ -16,6 +16,19 @@
   }
 }
 
+h1, h2, p,span {
+  font-family: 'Comfortaa', cursive;
+
+}
+
+p {
+  font-size: 12px;
+}
+h2 {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .App-header {
   font-family: 'Comfortaa', cursive;
   background-color: #ddd;
@@ -47,28 +60,29 @@
 }
 
 
-#move-button {
-  border: 1px solid white;
-  padding: 3px;
-  font-size: 10px;
-  float: left;
-  margin-left: -35px;
-  margin-top: 10px;
-  transform: rotate(-90deg) !important;
 
 
+#tableInfoWrapper {
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  border: 1px solid black;
+  padding: 5px;
 }
 
-#deal-button {
-  border: 1px solid white;
-  padding: 3px;
-  padding-right: 4px;
-  font-size: 10px;
-  float: left;
-  margin-left: -35px;
-  margin-top: 54px;
-  transform: rotate(-90deg) !important;
+#tableInfoWrapper Button {
+  width: 150px;
+}
 
+#playerNameList {
+  padding-bottom: 10px;
+}
+
+.playerName:hover {
+  cursor: pointer; 
+}
+#tableInfo {
+  padding-bottom: 10px;
 }
 
 #move-button:hover {
@@ -76,10 +90,59 @@
   background-color: white;
   color: green;
 }
+
 #deal-button:hover {
   cursor: pointer;
   background-color: white;
   color: green;
+}
+
+#exit-button {
+  color: white;
+  background-color: red;
+}
+
+.arrow {
+  border: solid black;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 2px;
+  margin-top: -5px;
+  margin-left: 5px;
+}
+
+.up {
+  margin-top: 0px !important;
+
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+
+#buttons h2 {
+  color: white;
+  border: 1px solid white;
+  padding: 3px;
+  font-size: 10px;
+  float: left;
+  margin-left: -35px;
+  transform: rotate(-90deg) !important;
+
+}
+
+#move-button {
+  margin-top: 10px;
+
+}
+
+#deal-button {
+  margin-top: 54px;
+  margin-left: -32px !important;
 }
 
 #chatCon {

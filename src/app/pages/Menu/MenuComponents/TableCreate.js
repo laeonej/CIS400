@@ -96,7 +96,7 @@ export default function TableCreate(props) {
                         id="outlined-basic"
                         label="Name"
                         variant="outlined"
-                        onChange={() => onPlayerNameChange}
+                        onChange={onPlayerNameChange}
                         value={playerName}
                         disabled={!isGuest}
                     />

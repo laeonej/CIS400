@@ -72,6 +72,22 @@ class Deck extends React.Component {
                 this.setState({ cardData: currCardData })
             }
         });
+
+        this.props.socket.on('confirmResetDeck', data => {
+            if (data.tableCode === this.props.tableCode) {
+                let data = []
+                for (var i = 0; i < 52; i++) {
+                    data.push({
+                        isPrivate: false,
+                        owner: null,
+                        posX: 0,
+                        posY: 0,
+                        inDeck: true,
+                    });
+                }
+                this.setState({ cardData: data })
+            }
+        });
     }
 
     changePrivate(id, privateVal) {
@@ -281,7 +297,7 @@ class Deck extends React.Component {
         let currCardData = this.state.cardData
         currCardData[randIdx].inDeck = false
         currCardData[randIdx].isPrivate = true
-        currCardData[randIdx].posY = 400
+        currCardData[randIdx].posY = 250
         currCardData[randIdx].owner = this.props.playerName
         // this.state.cardData[randIdx].inDeck = false;
         // this.state.cardData[randIdx].isPrivate = true;
@@ -304,6 +320,27 @@ class Deck extends React.Component {
         // var dealtCard = currCards[randIdx];
     }
 
+    resetDeck() {
+
+        let data = []
+        for (var i = 0; i < 52; i++) {
+            data.push({
+                isPrivate: false,
+                owner: null,
+                posX: 0,
+                posY: 0,
+                inDeck: true,
+            });
+        }
+        this.setState({ cardData: data })
+
+        this.props.socket.emit('resetDeck', {
+            'tableCode': this.props.tableCode,
+            'deckId': this.state.deckId
+        });
+    }
+
+
     render() {
         return (
             <div>
@@ -315,14 +352,11 @@ class Deck extends React.Component {
                     top: this.props.tableTop, left: this.props.tableLeft
                 }}>
                     <div id="buttons">
-                        <Draggable
-                            onStart={this.startDrag}
-                        >
-                            <h2 id="move-button">Move</h2>
-                        </Draggable>
                         <h2 id="deal-button" onClick={this.dealCard.bind(this)} variant="primary" type="button">
                             Deal
                          </h2>
+                        <h2 id="move-button" onClick={this.resetDeck.bind(this)} >Reset</h2>
+
                     </div>
                     {cardFront.map(({ id, src }) =>
                         <Card

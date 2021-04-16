@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react'
 import Deck from './Deck';
 import Image from './Image'
 import Chat from './Chat'
+import MenuBar from '../pages/Menu/MenuComponents/MenuBar'
 import ReactDOM from 'react-dom';
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@material-ui/core';
 import PlayerInfo from './PlayerInfo.js';
@@ -180,6 +181,7 @@ function Table(props) {
     const [tableTop, setTableTop] = useState(200 + 200)
     const [open, setOpen] = useState([false, false, false, false]) // may change based on max players
     const [isGuest, setIsGuest] = useState(true)
+    const [showTableInfo, setShowTableInfo] = useState(true)
     const [width, setWidth] = useState(0)
     const [height, setHeight] = useState(0)
     const [playerName, setPlayerName] = useState(props.playerName)
@@ -285,6 +287,9 @@ function Table(props) {
         }
     }
 
+    function showPlayerList() {
+        setShowTableInfo(!showTableInfo)
+    }
     function buttonName(tgtName) {
         if (isGuest) {
             return 'Add Friend';
@@ -300,71 +305,81 @@ function Table(props) {
     }
 
     return (
-        <div id="table " className="wrapper" onDragOver={handleDragOver} onDrop={handleDrop}>
-            <div style={{
-                backgroundColor: 'green', height: 400, width: 500,
-                borderStyle: 'solid', borderWidth: 2, borderColor: 'black',
-                marginLeft: '25%', marginTop: 220
-            }}>
-                <Deck tableTop={tableTop} tableLeft={tableLeft} tableCode={props.tableCode} socket={props.socket} playerName={playerName} />
+        <div>
+            <div id="tableInfoWrapper">
+                <Button id="showInfoButton" onClick={showPlayerList} variant="primary" type="button">
+                    Game Info <i class={showTableInfo ? "arrow down" : "arrow up"} ></i> </Button>
+                {showTableInfo ?
+                    <div id="tableInfo">
+                        <p>Table Code:</p>
+                        <h2> {props.tableCode} </h2>
+                        {props.players ?
+                            <div id="playerNameList">
+                                <p>Players:</p>
+                                <div> {[...props.players].map((player, index) => (
+                                    <div>
+                                        <span class="playerName" onClick={() => handlePlayerMenuOpen(index)}>{player}</span>
+                                        <PlayerInfoCard
+                                            open={open[index]}
+                                            player={player}
+                                            playerName={playerName}
+                                            menuClose={() => handlePlayerMenuClose(index)}
+                                            isGuest={isGuest}
+                                            buttonName={"Add Friend"}
+                                            addFriendButton={() => friendButtonClick(player)}
+                                        />
+                                        {/* <Dialog
+                            open={open[index]}
+                            onClose={() => handlePlayerMenuClose(index)}
+                        >
+                            <DialogTitle>User: {player}</DialogTitle>
+                            <DialogContent>
+                                <PlayerInfo name={player} />
+                            </DialogContent>
+                            <DialogActions>
+                                <Button disabled={isGuest || playerName === player} onClick={() => friendButtonClick(player)}>
+                                    {buttonName(player)}
+                                </Button>
+                                <Button disabled={playerName === player} onClick={() => handlePlayerMenuClose(index)}>
+                                    Message
+                                    </Button>
+                                <Button disabled={playerName === player} onClick={() => handlePlayerMenuClose(index)} color="secondary" autoFocus>
+                                    Mute
+                                    </Button>
+                            </DialogActions>
+                        </Dialog> */}
 
-                {/* {previewUrl && <div className="image">
+                                    </div>
+
+                                )
+                                )}
+
+                                </div ></div> :
+                            <div></div>
+
+
+                        }
+                        <Button id="exit-button" onClick={props.exit} variant="primary" type="button">
+                            Exit </Button>
+                    </div> : <div></div>}
+            </div>
+            <div id="table " className="wrapper" onDragOver={handleDragOver} onDrop={handleDrop}>
+                <div style={{
+                    backgroundColor: 'green', height: 400, width: 500,
+                    borderStyle: 'solid', borderWidth: 2, borderColor: 'black',
+                    marginLeft: '25%', marginTop: 220
+                }}>
+                    <Deck tableTop={tableTop} tableLeft={tableLeft} tableCode={props.tableCode} socket={props.socket} playerName={playerName} />
+
+                    {/* {previewUrl && <div className="image">
                     <img src={previewUrl} alt='img' />
                     <span> {image.name} </span>
                 </div>} */}
-
-                <h2> {props.tableCode} </h2>
-                {props.players ?
-                    <div> {[...props.players].map((player, index) => (
-                        <div>
-                            <span onClick={() => handlePlayerMenuOpen(index)}>{player}</span>
-                            {/* <PlayerInfoCard 
-                                open={open[index]} 
-                                player={player} 
-                                playerSrc={playerName}
-                                menuClose={() => handlePlayerMenuClose(index)}
-                                isGuest={isGuest}
-                                buttonName={"Add Friend"}
-                                addFriendButton={() => friendButtonClick(player)}
-                            /> */}
-                            <Dialog
-                                open={open[index]}
-                                onClose={() => handlePlayerMenuClose(index)}
-                            >
-                                <DialogTitle>User: {player}</DialogTitle>
-                                <DialogContent>
-                                    <PlayerInfo name={player} />
-                                </DialogContent>
-                                <DialogActions>
-                                    <Button disabled={isGuest || playerName === player} onClick={() => friendButtonClick(player)}>
-                                        {buttonName(player)}
-                                    </Button>
-                                    <Button disabled={playerName === player} onClick={() => handlePlayerMenuClose(index)}>
-                                        Message
-                                    </Button>
-                                    <Button disabled={playerName === player} onClick={() => handlePlayerMenuClose(index)} color="secondary" autoFocus>
-                                        Mute
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
-
-                        </div>
-
-                    )
-                    )}
-                    </div > :
-                    <div></div>
-                }
-
-                <div style={{ position: "absolute", top: 300, left: 200 }}>{images}</div>
-
-                <Button onClick={props.exit} variant="primary" type="button">
-                    Exit
-                </Button>
-            </div>
-            <Chat playerName={playerName} />
+                    <div style={{ position: "absolute", top: 300, left: 200 }}>{images}</div>
+                </div>
+                <Chat playerName={playerName} />
+            </div >
         </div >
-
     );
 
 }
