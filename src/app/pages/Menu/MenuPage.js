@@ -14,8 +14,9 @@ export default function Menu(props) {
     const [menu, setMenu] = useState(true)
     const [createPage, setCreatePage] = useState(false)
     const [joinPage, setJoinPage] = useState(false)
-    const [endPoint, setEndPoint] = useState("https://apricot-shortcake-33947.herokuapp.com/")
-    const [socket, setSocket] = useState(null)
+    const [endPoint, setEndPoint] = useState("http://localhost:5000")
+    // const [endPoint, setEndPoint] = useState("https://apricot-shortcake-33947.herokuapp.com/")
+    const [thisSocket, setThisSocket] = useState(null)
     const [inGame, setInGame] = useState(false)
     const [tableCode, setTableCode] = useState('AAAA11')
     const [players, setPlayers] = useState(null)
@@ -23,22 +24,40 @@ export default function Menu(props) {
     const [isGuest, setIsGuest] = useState(true)
     const [test, setTest] = useState('not working')
 
+    
+
     useEffect(async () => {
         // componentDidmount
-        const socket = io(endPoint, { transports: ['websocket'] })
-        socket.on("connected", data => {
-            setSocket(socket)
-            //updateAnalytics({ "id": data.id, "type": "numConnections" })
-        })
-
-        socket.on('confirmCreateTable', async (data) => {
-            confirmCreateTableChangeInfo(data)
-        })
-
+       
         if (user !== null && user !== undefined) {
             setPlayerName(user.displayName)
             setIsGuest(false)
+            thisSocket.emit('updateConnectedPlayersName', { 'playerName': playerName, 'isGuest' : false} )
         }
+
+        
+
+        var socket = thisSocket
+        if (thisSocket == null) {
+            socket = io(endPoint, { transports: ['websocket'], playerName: playerName})
+        }
+
+        
+
+        socket.on("connected", data => {
+            setThisSocket(socket)
+            //updateAnalytics({ "id": data.id, "type": "numConnections" })
+        })
+
+        
+
+        socket.on('confirmCreateTable', data => {
+            setTableCode(data.tableCode)
+            setPlayers(data.players)
+            setCreatePage(false)
+            setInGame(true)
+            socket.emit('updateConnectedPlayersName', { 'playerName': playerName, 'isGuest': isGuest })
+        })
 
         socket.on("confirmNewPlayer", data => {
             if (data.tableCode === tableCode) {
@@ -48,32 +67,25 @@ export default function Menu(props) {
         return () => {
             // componentWillUnmount
             //updateAnalytics({ "type": "numDisconnections" })
+
         }
-    }, [])
+    }, [tableCode, playerName, user])
 
-    function confirmCreateTableChangeInfo(data) {
 
-        setTableCode(data.tableCode)
-        setPlayers(data.players)
-    }
-
-    function createGame(enteredPlayerName) {
-        setPlayerName(enteredPlayerName)
-        socket.emit('createTable', { 'playerName': enteredPlayerName })
+    async function createGame(enteredPlayerName, isPrivate, gamemode) {
+        await setPlayerName(enteredPlayerName)
+        thisSocket.emit('createTable', { 'playerName': enteredPlayerName, 'isPrivate': isPrivate, 'gamemode': gamemode })
+        
         updateAnalytics({ "type": "numTablesCreated" })
-
-        console.log(tableCode)
-        console.log(players)
-        setCreatePage(false)
-        setInGame(true)
     }
 
     // may need fixing
     function exitTable() {
         console.log('exitTable() called')
-        socket.emit("exitTable", {
+        thisSocket.emit("exitTable", {
             "tableCode": tableCode,
-            "playerName": playerName
+            "playerName": playerName,
+            "isGuest" : isGuest,
         })
         setTableCode(null)
         setPlayerName(null)
@@ -83,11 +95,12 @@ export default function Menu(props) {
 
     async function joinGame(enteredTableCode, enteredPlayerName) {
         console.log("joinGame called")
-        await socket.emit('joinTable', { "tableCode": enteredTableCode, "playerName": enteredPlayerName })
-        await socket.on('confirmJoinTable', data => {
+        await thisSocket.emit('joinTable', { "tableCode": enteredTableCode, "playerName": enteredPlayerName })
+        await thisSocket.on('confirmJoinTable', data => {
             if (data.flag) {
                 setTableCode(enteredTableCode)
                 setPlayerName(enteredPlayerName)
+                thisSocket.emit('updateConnectedPlayersName', { 'playerName': enteredPlayerName, 'isGuest': isGuest})
                 setPlayers(data.players)
                 updateAnalytics({ "type": "numTablesJoined" })
                 setJoinPage(false)
@@ -142,7 +155,7 @@ export default function Menu(props) {
                 <Table
                     players={players}
                     tableCode={tableCode}
-                    socket={socket}
+                    socket={thisSocket}
                     playerName={playerName}
                     isGuest={isGuest}
                     exit={exitTable}
