@@ -35,7 +35,7 @@ export const Chat = (props) => {
     return (
         <div id='chatCon'>
             <div class="chat-box" style={chatopen ? show : hide}>
-                <div class="header">Chat with me</div>
+                <div class="header">Table Chat</div>
                 <div class="msg-area">
                     {
                         messages.map((msg, i) => (
