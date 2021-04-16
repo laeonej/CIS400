@@ -73,11 +73,9 @@ export default function Menu(props) {
     }, [tableCode, playerName, user])
 
 
-    async function createGame(enteredPlayerName) {
-        console.log('creating!!!!')
-        console.log(enteredPlayerName)
+    async function createGame(enteredPlayerName, isPrivate, gamemode) {
         await setPlayerName(enteredPlayerName)
-        thisSocket.emit('createTable', { 'playerName': enteredPlayerName })
+        thisSocket.emit('createTable', { 'playerName': enteredPlayerName, 'isPrivate': isPrivate, 'gamemode': gamemode })
         
         updateAnalytics({ "type": "numTablesCreated" })
     }

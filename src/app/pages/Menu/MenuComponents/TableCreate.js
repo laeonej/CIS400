@@ -1,13 +1,31 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { UserContext } from '../../../../provider/UserProvider'
 import MenuBar from './MenuBar'
-import { Button, makeStyles, TextField, Typography } from '@material-ui/core'
-
+import {
+    Button,
+    makeStyles,
+    TextField,
+    Typography,
+    Card,
+    CardContent,
+    Checkbox,
+    FormGroup,
+    FormControlLabel,
+    Grid,
+    Select,
+    MenuItem,
+    InputLabel
+} from '@material-ui/core'
+import Lock from '@material-ui/icons/Lock'
+import LockOpen from '@material-ui/icons/LockOpen'
 
 // can be updated later to make things prettier
 const useStyles = makeStyles((theme) => ({
     backBtn: {
         marginLeft: '2%'
+    },
+    gameSetting: {
+        marginBottom: '2%'
     }
 }))
 
@@ -24,8 +42,11 @@ export default function TableCreate(props) {
     const [isGuest, setIsGuest] = useState(true)
     const [error, setError] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
+    const [isPrivate, setIsPrivate] = useState(false)
+    const [gamemode, setGamemode] = useState('Sandbox')
+
     useEffect(() => {
-        
+
 
 
         // If user is logged in, fill in input with their name and disable
@@ -33,8 +54,8 @@ export default function TableCreate(props) {
             setPlayerName(user.displayName)
             setIsGuest(false)
         }
-
-    }, [props, user, playerName])
+        console.log(isPrivate)
+    }, [props, user, playerName, isPrivate])
 
 
     function onPlayerNameChange(e) {
@@ -46,45 +67,81 @@ export default function TableCreate(props) {
         if (playerName == '') {
             setError(true)
             setErrorMessage("Please enter a display name")
-        // may want to check if name already exists
+            // may want to check if name already exists
         } else {
-            props.makeGame(playerName)
+            props.makeGame(playerName, isPrivate, gamemode)
         }
+    }
+
+    function handlePrivateLock(e) {
+        setIsPrivate(!isPrivate)
+    }
+
+    function handleGamemodeSelect(e) {
+        setGamemode(e.target.value)
     }
 
     return (
         <div>
-            <MenuBar/>
+            <MenuBar />
             <div style={{ textAlign: 'center' }}>
-                <form 
-                    noValidate 
+                <form
+                    noValidate
                     autoComplete="off"
                 >
                     <h1>
                         Enter Display Name
                     </h1>
-                    <TextField 
+                    <TextField
                         id="outlined-basic"
                         label="Name"
                         variant="outlined"
-                        onChange={onPlayerNameChange}
+                        onChange={() => onPlayerNameChange}
                         value={playerName}
                         disabled={!isGuest}
                     />
 
                 </form>
-                { error ?
+                {error ?
                     <Typography variant='body2' color='error'>{errorMessage}</Typography>
-                    :<></>
+                    : <></>
                 }
-                <Button 
+
+                <Typography variant='h6'>
+                    Game Settings
+                        </Typography>
+                <Grid container alignItems='center' spacing={2} className={classes.gameSetting}>
+                    <Grid item xs={12}>
+                        <FormControlLabel
+                            control={<Checkbox icon={<LockOpen />} checkedIcon={<Lock />} name="privacy" />}
+                            onChange={handlePrivateLock}
+                            label={isPrivate ? "Private" : "Public"}
+                        />
+                        <InputLabel id='gamemode-label'>Gamemode</InputLabel>
+                        <Select
+                            labelId='gamemode-label'
+                            id="select-gamemode"
+                            value={gamemode}
+                            onChange={handleGamemodeSelect}
+                        >
+                            <MenuItem value={'Sandbox'}>Sandbox</MenuItem>
+
+                        </Select>
+                    </Grid>
+
+
+                </Grid>
+
+
+
+                <Button
                     variant='contained'
                     color='primary'
                     onClick={createTable}
                 >
                     Create
                 </Button>
-                <Button 
+                <Button
                     className={classes.backBtn}
                     variant='outlined'
                     color='secondary'
